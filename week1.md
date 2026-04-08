@@ -70,16 +70,59 @@ RAG 모델은 단어 그대로 **'검색을 통해(Retrieval) 정보를 가져�
 
 ---
 
-## 💡 연구 트렌드 및 관련 학술 아티클
+## 🌟 [Deep Dive] RAG 기반 기술의 진화를 이끈 핵심 논문 집중 탐구
 
-> **[Paper Reference 1]** *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (Lewis et al., 2020)*
-> RAG 메커니즘을 딥러닝과 자연어 처리 분야에 최초로 명명하고 제안한 Facebook(Meta) AI의 기념비적 논문입니다. 이 논문은 매개변수형 메모리(Parametric Memory)와 비매개변수형(Non-parametric) 외부 데이터베이스를 상호 융합하면 지식 집약적 질문에서 모델의 환각이 획기적으로 억제됨을 처음 수학적으로 증명했습니다. 
+이론적 이해를 완성하기 위해, RAG 시스템의 태동과 발전 방향을 결정지은 **역사적인 4대 핵심 학술 논문**을 소개합니다. 논문 내용만으로도 RAG의 태동과 아키텍처의 한계를 깊이 있게 깨달을 수 있습니다.
 
-> **[Paper Reference 2]** *Lost in the Middle: How Language Models Use Long Contexts (Liu et al., 2023)*
-> 이 연구 논문은 LLM이 문서의 처음과 끝 내용만 기억하고 '가운데' 있는 정보의 정확도를 심각하게 떨어뜨리는 U자형 성능 곡선(U-shaped performance)을 발견했습니다. RAG 시스템에서 단순히 글을 길게 때려 넣는 것이 해답이 아님을 경고하며 청킹 시스템의 중요성을 입증했습니다.
+### 📜 1. RAG의 기념비적 탄생 (초석 논문)
+**[논문명]** *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (Lewis et al., 2020)*
+* **연구 배경:** 언어 모델(BART)이 세상의 모든 지식을 파라미터(신경망 뉴런) 내부에 우겨넣을 수 없다는 한계점에 봉착했습니다.
+* **해결 기술 (Architecture):** 
+  외부의 위키피디아 문서 더미(Non-parametric memory)를 실시간으로 검색하여 텍스트를 물어오고, 이를 생성 모델(Parametric memory)의 입력단에 붙여버리는 최초의 'RAG' 엔드투엔드 모델을 제안했습니다. 
+* **의의:** 지식 지향적(Knowledge-Intensive) 질문, 즉 상식을 요구하는 오픈도메인 질의응답에서 단순히 덩치가 거대한 LLM보다 검색을 덧붙인 훨씬 작은 사이즈의 RAG 모델이 정확도 면에서 압도적으로 우수함을 최초로 증명했습니다.
+
+<div class="mermaid">
+graph LR
+    Q[Input Query] --> Retriever[Dense Retriever (DPR)]
+    Retriever --> |Wikipedia DB 검색| Docs[Top-K Documents]
+    Q -.-> Generator[LLM Generator / BART]
+    Docs --> Generator
+    Generator --> Output[Final Answer]
+    style Retriever fill:#f9f,stroke:#333,stroke-width:2px
+    style Generator fill:#bbf,stroke:#333,stroke-width:2px
+</div>
+
+### 📜 2. 컨텍스트의 병목: 가운데서 길을 잃다
+**[논문명]** *Lost in the Middle: How Language Models Use Long Contexts (Liu et al., 2023)*
+* **연구 배경:** LLM의 스펙이 좋아져서 이제 책 한 권(수만 토큰)을 다 집어넣을 수 있게 되었습니다. 그렇다면 그냥 검색된 문서를 필터링 없이 LLM에게 무식하게 통째로 다 넣어주면 되지 않을까? 라는 착각이 팽배했습니다.
+* **증명 결과 (Architecture Limits):**
+  연구팀은 긴 문장을 통째로 넣고 "비밀 단어"가 맨 앞, 중간, 맨 끝에 있을 때의 식별률을 테스트했습니다. 결과는 충격적입니다. LLM은 문서의 처음(Primacy effect)과 끝(Recency effect)에 있는 단서는 기가 막히게 캐치하지만, **가운데 부분에 정답이 있으면 갑자기 찾지 못하고 바보가 되는 U자형 성능 곡선(U-shaped performance)** 을 보였습니다. 
+* **의의:** RAG 시스템에서 단순히 글을 길게 때려 넣는 것은 자살 행위이며, 반드시 가장 핵심적인 문서만을 엄선해 요약해서(리랭킹) 짧게 주어야 한다는 '품질 관리'의 교리와 정당성을 세워주었습니다.
+
+<div class="mermaid">
+xychart-beta
+    title "Lost in the Middle: 정답 위치에 따른 LLM 정확도 성능"
+    x-axis "정답의 위치 (문서의 앞부분 -----------> 문서의 뒷부분)" ["1(초반)", "5", "10(중반)", "15", "20(후반)"]
+    y-axis "Accuracy (정확도 %)" 0 --> 100
+    line [95, 75, 20, 65, 90]
+</div>
+
+### 📜 3. 사전 학습 단계부터 검색을 탑재하다 (REALM)
+**[논문명]** *REALM: Retrieval-Augmented Language Model Pre-training (Guu et al., 구글 리서치 2020)*
+* **연구 배경:** 일반적인 모델은 일단 언어를 처음 백지상태로 배울 때(Pre-training)는 책 내용을 그냥 외우게 둡니다. 나중에 RAG를 붙이는 게 보통입니다. 하지만 구글 연구진은 아예 유치원생(학습 초기) 때부터 검색하는 법을 뇌 구조에 심으면 어떨지 연구했습니다.
+* **해결 기술 (Architecture):** 
+  빈칸 채우기(Masked Language Modeling) 학습을 시킬 때, 모델 스스로 외부 지식 코퍼스에서 힌트를 찾아와서 빈칸을 채우도록 신경망 회로 전체를 역전파(Backpropagation) 학습시키는 혁명적인 방법을 사용했습니다.
+* **의의:** 검색(Retrieval)과 생성(LM) 모듈이 서로 동기화되며 학습되어, 어떤 문서를 찾아와야 텍스트를 가장 잘 완성할 수 있는지 그 '검색 감각' 자체가 무지막지하게 향상되는 성과를 확인했습니다.
+
+### 📜 4. 딥마인드의 초대규모 검색 모델 (RETRO)
+**[논문명]** *RETRO: Improving language models by retrieving from trillions of tokens (Borgeaud et al., 딥마인드 2021)*
+* **연구 배경:** 초거대 모델(예: GPT-3, 175B)을 학습시키는 비용은 천문학적입니다. 파라미터(뇌) 크기를 획기적으로 줄이면서 똑같은, 혹은 더 천재적인 성능을 낼 수는 없을까?
+* **해결 기술 (Architecture):**
+  검색 전용으로 2조 개(2 Trillion)의 어마어마한 토큰 텍스트 데이터베이스를 구축한 뒤, 불과 파라미터 크기가 고작 7B (GPT-3의 25분의 1 크기)밖에 안 되는 꼬마 모델에 검색 기능(Chunked cross-attention)을 장착했습니다.
+* **의의:** 가난하고 작은 모델이어도, 방대한 데이터베이스를 등에 업은 RETRO 메커니즘이라면 기존의 25배나 거대한 초대졸 모델의 성능을 압도하며 박살 낼 수 있다는 '외장 하드(DB)의 압도적인 파워'를 실증했습니다.
 
 ---
 
 ## 마무리하며
 
-이번 1주차에서는 LLM의 본원적 한계를 넘기 위해 외부 확장 뇌(데이터베이스)를 장착하는 RAG 생태계의 거시적 안목을 배웠습니다. 다음 2주차 수업에서는 이 시스템의 종착역이자 출구를 담당하는 LLM 통제 기술, 즉 프롬프트 엔지니어링 메커니즘인 'Prompting Strategies for Hallucination Reduction' 분야를 대대적으로 해부해 보겠습니다.
+이번 1주차에서는 LLM의 본원적 한계를 넘기 위해 외부 확장 뇌(데이터베이스)를 장착하는 RAG 생태계의 거시적 안목과 학계의 선구적인 연구 역사를 배웠습니다. 다음 2주차 수업에서는 이 시스템의 종착역이자 출구를 담당하는 LLM 통제 기술, 즉 프롬프트 엔지니어링 메커니즘인 'Prompting Strategies for Hallucination Reduction' 분야를 대대적으로 해부해 보겠습니다.

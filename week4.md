@@ -57,19 +57,58 @@ title: 4주차. Embedding Models & Representation Learning for Retrieval
 ![Dense Vectors vs Sparse Structure](assets/images_new/Fig_4_4_page_94.png)
 *Fig 4.4: Dense Vector 임베딩(밀집 벡터)의 코사인 앵글 각도 분석 모형.*
 
-> 📐 **이해를 돕는 예시: 나침반 탐지기 맞추기**
-> 사용자가 던진 질문 벡터가 허공에 "북동쪽 45도" 위를 찌르고 있다 가정합니다.
-> 데이터베이스 안에는 [정북향 90도 문서], [남서향 문서], [북북동 50도 문서] 들이 무수히 많습니다. 시스템은 나침반 자성에 가장 일치하는 각도로 병렬화하여 겹치는 "북북동 50도 짜리 문서군"만을 순식간에 추계하여 RAG의 답변 재료 1순위로 채택하여 데려옵니다. 문서의 분량이 5장이라 화살표가 백날 길건지, 1장이라 짧건지 길이는 페널티를 주지 않습니다 오직 궤적의 '결'만을 봅니다.
-
 ---
 
-## 💡 최신 연구 트렌드 및 관련 학술 아티클
+## 🌟 [Deep Dive] 임베딩 진화의 역사를 뒤바꾼 압도적 학술 논문과 아키텍처
 
-> **[Paper Reference 1]** *MTEB: Massive Text Embedding Benchmark (Muennighoff et al., 2023)*
-> 이 연구는 수백 종이 난립하는 업계의 임베딩 모델들을 통일된 기준으로 채점하는 'MTEB 리더보드 테스트 규격'을 최초로 공식화한 학계의 표준입니다. 7가지 텍스트 과제(구분, 검색, 문장 유사도 판별 등)를 도입해 어떤 언어 임베딩이 진정한 의미론적 분할 능력이 있는지 정밀하게 입증시켰습니다. 허깅페이스 리더보드의 바이블 격 논문입니다.
+우리의 질문과 문서가 어떤 톱니바퀴 모델을 거쳐 숫자로 트랜스폼되는가? 글로벌 기업들이 도입한 거대한 서치 인코더 학계 표준 논문 3대장 구조를 다이아그램과 함께 완벽히 해부합니다.
 
-> **[Paper Reference 2]** *BGE M3-Embedding: Multi-Lingual, Multi-Function, Multi-Granularity (BAAI, 2024)*
-> 중국 베이징 인공지능 연구소(BAAI)가 발표한 최신 SOTA(최고 효율) 모델 연구 모델입니다. 기존 영어에만 의존하던 Dense Retrieval 임베딩의 한계를 박살내고, 한국어나 일본어 등 100개 언어의 의미론적 교차 거리를 완벽히 이해하는 다국어 처리 능력의 결정체를 구현했습니다. 게다가 Dense 서치뿐 아니라 Sparse(키워드 단어) 임베딩까지 단일 모델 안에 하이브리드 인코딩 시키는 놀라운 메커니즘을 창시했습니다.
+### 📜 1. MTEB: 수천개 임베딩들의 세계 기록 올림픽 경쟁장
+**[논문명]** *MTEB: Massive Text Embedding Benchmark (Muennighoff et al., Hugging Face, 2023)*
+* **연구 배경:** 어떤 회사가 만든 임베딩 모델이 RAG에 제일 검색 성능이 강한지, 여태껏 전 세계의 비교 통일된 기준 잣대가 없어서 난장판이었습니다.
+* **해결 기술 (Architecture):** 
+  이 연구는 분류(Classification), 검색 매칭(Retrieval), 문장 동질성(Similarity) 등 인간의 7대 주요 자연어 구사 테스트를 50개 이상의 언어 벤치마크 과제로 규격화한 **'MTEB 리더보드 시험 규격'**을 최초로 공표했습니다. 
+* **의의:** AI 모델을 선발할 때 이 벤치마크 점수만 확인하면 우리 회사 환경에 최적화된 엔진이 누구인지 단번에 판독할 수 있습니다. 허깅페이스 글로벌 보드의 심판판 바이블이 성립되었습니다.
+
+### 📜 2. ColBERT: 문단 전체 뭉개기 한계를 돌파한 '지연 교차 연산장치'
+**[논문명]** *ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT (Khattab & Zaharia, 스탠포드 대학교, 2020)*
+* **연구 배경:** 예전에는 문장 전체 500단어의 뜻을 쥐어짜서 단 한 개의 길다란 화살표 벡터 막대(Single Dense Vector)로 통합해버려 저장했습니다. 이렇게 하니, 문장 안에 섬세하게 숨은 자잘한 힌트 뉴앙스들이 거대 뭉퉁그려진 화살표 힘에 묻혀 소멸, 삭제되어버렸습니다!
+* **해결 기술 (Architecture):**
+  무식하게 한 번에 뭉개버리지 않습니다. 스탠포드 팀이 발명한 **Late Interaction (지연 상호작용)** 방식은 문서 내의 **"단어(Token) 한 알 한 알마다 전부 개별적으로 벡터 화살표를 다 찍어서 가둔 채"** 데이터베이스에 와르르 쏟아 부어 입체적으로 저장합니다. 나중에 질문이 들어오면, 질문 속의 단어와 문서 속의 낱알 토큰들이 각각 짝을 지어 정교하게 연산(Max-Sim) 합성을 이루어 미친 듯이 소름 돋는 정답 매칭을 뿜어냅니다.
+* **의의:** 1차원 임베딩 검색계의 패러다임을 토큰 단위(Token-level)의 입체 검색 시대로 갈아치운 혁명입니다. 현대 엔터프라이즈 RAG 최정예 병기입니다.
+
+<div class="mermaid">
+graph LR
+    subgraph Query
+    Q[질문: "대한민국 위인"] --> E1[토큰 Q1 벡터] & E2[토큰 Q2 벡터]
+    end
+    subgraph Document (Pre-computed)
+    D[사전 문서] --> D1[토큰 D1 벡터] & D2[토큰 D2 벡터] & D3[토큰 D3 벡터]
+    end
+    E1 -.->|Max 유사도 연산| D1
+    E1 -.->|Max 유사도 연산| D2
+    E2 -.->|Max 유사도 연산| D3
+    style Q fill:#cce5ff
+    style D fill:#d4edda
+</div>
+
+### 📜 3. BGE M3: 전능자 통합 하이브리드 엔진의 현신
+**[논문명]** *BGE M3-Embedding: Multi-Lingual, Multi-Function, Multi-Granularity (BAAI, 2024)*
+* **연구 배경:** 한국어로 질문했는데 DB상의 영어 원서를 매칭해줄 다국어 모델이 부족했고, 벡터 서치와 옛날 키워드 서치 모듈 두 개를 서버에 다 깔아야 하는 유지보수 빡침이 너무 컸습니다.
+* **해결 기술 (Architecture):**
+  중국 베이징 인공지능 연구원(BAAI)에서 발표한 미친 아키텍처 스펙으로, 100개 언어 텍스트 문맥 공간 거리를 다 교차 연합해버렸습니다. 게다가 이 딥러닝 모델 단지 하나가 내부에서 **Dense(추상 문맥 화살표), Sparse(단어 키워드 매칭), 그리고 자체 ColBERT(멀티 토큰) 이 세 가지 속성의 강력한 벡터값 3종류를 동시에 아웃풋 삼지창으로 뽑아내는 신공**을 보입니다!
+* **의의:** 서버 구성을 복잡하게 할 필요 없이, 이 모델 하나만 설치하면 무적 하이브리드 RAG 임베딩이 뚝딱 설계 완성되는 충격과 공포의 오픈소스 1위 장악 모델입니다.
+
+<div class="mermaid">
+stateDiagram-v2
+    [*] --> [BGE M3 통합 인코더]
+    [BGE M3 통합 인코더] --> Dense_Vector: 문맥 속뜻 추론 화살표 추출
+    [BGE M3 통합 인코더] --> Sparse_Vector: 키워드 문자 배열 가중치 추출
+    [BGE M3 통합 인코더] --> ColBERT_Tokens: 단어 토큰 알갱이 입체망 구축
+    Dense_Vector --> RAG_최종분석
+    Sparse_Vector --> RAG_최종분석
+    ColBERT_Tokens --> RAG_최종분석
+</div>
 
 ---
 
