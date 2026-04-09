@@ -3,83 +3,76 @@ layout: default
 title: 3주차. Advanced Document Chunking & Context Engineering
 ---
 
-# 3주차: Advanced Document Chunking & Context Engineering (고도화된 문서 분할과 토막 파이프라인의 극의)
+# 3주차: Advanced Document Chunking & Context Engineering (검색의 심장: 텍스트 분할 최적화 및 토막 수술의 정점)
 
-아무리 훌륭한 프롬프트 통제기(Week 2)와 천문학적 벡터 인프라(Week 5)를 보유했다 하더라도, RAG 파이프라인의 **'입구'** 격인 데이터 수집단에서 문서가 쓰레기같이 토막 난다면 쓰레기가 들어가 쓰레기가 나오는(Garbage In, Garbage Out) 파멸을 면치 못합니다.
+아무리 기가 막히게 세뇌된 프롬프트(Week 2)와 천문학적 컴퓨팅 엔진을 가동해도, RAG의 첫 관문인 '문서 수집단(Ingestion)'에서 데이터가 쓰레기같이 조각나 인입된다면 쓰레기 답변(GIGO)을 면할 길이 없습니다. 
 
-인간의 안구는 수천 페이지의 회계 장부를 보며 맥락을 자유자재로 이어 붙이지만, AI의 벡터 DB는 입력 문서를 작은 토막(Chunk) 단위로 가차 없이 난도질하여 고립된 단위 배열로 구겨 넣습니다. 이때 "이순신 장군은 명량 해전에서 / (뚝 끊김) / 13척의 배로 싸웠다" 와 같이 문맥 구조망의 허리가 잘려 절단되면, 이 조각을 찾아온 LLM은 주어가 누구인지 영구 상실하여 답변을 날조합니다. 이 끔찍한 맥락 파단(Context Fragmentation)의 저주를 원천 봉쇄하는 혁명적 기법 체계를 다룹니다.
-
----
-
-## 1. 청킹(Chunking)의 파괴적 진화론: 단절에서 유기체로 
-
-초창기 모델들은 단순히 500자 단위, 1000토큰 단위로 무자비하게 텍스트를 기계톱으로 썰어버리는 Naive Fixed-size Chunking을 지향했습니다. 하지만 현대 엔터프라이즈 환경은 이를 버리고 **의미 단위 생태계 분할(Semantic Split)** 로 이동했습니다.
-
-![Advanced Chunking Techniques](assets/images_new/Fig_4_1_page_40.png)
-*Fig 4.1: [어드밴스드 청킹 기법 (Advanced Chunking)] 특정 파서를 사용해 Chunk Size(50)와 Overlap(15) 설정을 튜닝하여, 문맥의 끄트머리 꼬리를 다음 청크의 앞머리에 교집합시켜 맥락 단절을 막는 오버랩 튜닝의 시각화 파이프.*
-
-단순 글자 수 쪼개기를 넘어서, 문서의 HTML 태그나 Markdown 헤더의 논리 트리를 보존하는 구조 인식 분할(Structural Parsing)과 문서의 앞뒤를 참조하는 계층형 로직이 시장을 지배하기 시작합니다.
+인간의 안구는 1,000페이지 분량의 회계 장부를 흝어보며 맥락을 자연스레 이어 붙입니다. 하지만 컴퓨터 데이터베이스는 텍스트를 기계의 뇌 모델 임계점에 맞게 '청크(Chunk, 덩어리)' 단위로 가차 없이 난도질하여 보관합니다. 이 난도질 과정에서 발생할 수 있는 맥락 파단(Context Fragmentation)의 저주를 원천 봉쇄하는 혁신적 기법과 측정 방법론을 해부합니다.
 
 ---
 
-## 🌟 토막 단절의 맹점을 부수는 전설적 논문 및 SOTA 아키텍처 완전 해부
+## 1. 전장의 기초: 청킹(Chunking)의 나비 효과
 
-텍스트의 물리적 뼈대를 끊지 않고 유기체적 생명력을 보존하기 위해 등장한 학계와 업계의 최신 메타 방법론들을 깊이 들여다봅니다. 단순 PDF의 범주를 아득히 뛰어넘어 실제 인더스트리의 코어 인사이트를 돌출시킵니다.
+<img src="assets/images_new/Fig_4_1_page_40.png" width="600">
+*Fig 4.1: [청킹 구조 및 영향력 시각화 (PDF p.41)] 특정 파서를 사용해 Chunk Size(50)와 Overlap(15) 설정을 튜닝하여 문단을 핑크, 블루 색상으로 자연스럽게 교차 분리한 청크 구조 실례.*
 
-### 📜 1. 의미 기반 쪼개기 시스템 (Semantic Chunking & Splitting)
-**[핵심 아키텍처 / 프레임워크 패러다임]** *LlamaIndex Semantic Splitter Node Parser*
-* **해설:** 문장 부호 제약 없이, 문장과 문장 사이의 '임베딩 거리(유사도)'를 미친 듯이 실시간으로 계산합니다. 만약 1번 문장과 2번 문장의 주제 텐서가 갑자기 급변하여 코사인 각도가 낮아진다면, "아, 여기서부터 단락 주제가 바뀌었군!" 이라고 AI 스스로 판단해 그 틈새를 가위로 잘라내는 지능형 자가 절단 기법입니다.
-* 💡 **핵심 산업계 Insight:** 법률 문서나 긴 정책 매뉴얼에서 진가를 폭발시킵니다. "계약 파기 위약금 조항"과 "보증 기간 조항"이 물리적 글자 수의 제약 때문에 엉뚱하게 반반 갈라져 섞이는 재앙을 아예 100% 원천 봉쇄해버리는 의미론적 단락 분해의 바이블.
+* 💡 **핵심 기능:** 글자를 어떻게 쪼개느냐는 단순한 전처리가 아닙니다. 청크 사이즈와 전략은 **"검색 정밀도 품질, 벡터 스토리지 저장 DB 유지 비용 과금액, 실시간 쿼리 응답 랙 타임(지연 시간), 그리고 최악의 환각(Hallucination) 발생 여부"** 전체에 직접적 직격탄 영향을 미칩니다. 사이즈 크면 과금이 폭발하고 속도가 느려지며, 너무 작게 자르면 맥락이 잘려 LLM이 사기를 치기 시작합니다.
 
-### 📜 2. 후기 청킹 패러다임 (Late Chunking의 대반란)
-**[혁신 논문 모델]** *Late Chunking: Jina AI & BAAI Research 트렌드 (2024)*
-* **해설:** 기존 멍청한 방식들은 "1. 텍스트를 토막낸다 -> 2. 임베딩 모델에 넣어 번호판(벡터)을 판다" 형식이다 보니, 토막이 잘리면 텍스트가 숲을 잃었습니다. Jina AI 등은 미친 역발상을 꾀합니다. **"1. 토막 내기 전에 아예 거대한 책 1권을 통째로 임베딩 모델 롱 컨텍스트에 밀어 넣어 전체 문단 간의 Attention(교차 의미망)을 다 계산시킨다 -> 2. 그 후 의미가 가득 충전된 상태에서 나중에 잘라낸다(Late Chunking)."**
-* 💡 **핵심 산업계 Insight:** "사과"라는 청크 덩어리를 잘라낼 때, "이건 먹는 사과가 아니라 스티브잡스의 아까 그 사과야"라는 전 우주의 배경 맥락 지식을 영원히 품고 절단되게 하여 극도의 탐색 적중률 폭발을 가져오는 SOTA 트랙.
-
-### 📜 3. Small-to-Big Retrieval (Parent-Child 문서 역추적 계층화)
-**[아키텍처 로직]** *Auto-Merging Retriever & Parent Document Retreiver*
-* **해설:** 벡터 데이터베이스에 저장할 때는 검색 레이더의 정밀 포착 효율을 극대화하기 위해 극도로 쪼그맣게 '명사형 1줄(Child)'로 잘게 부숴 저장합니다. 하지만 검색되어 LLM 프롬프트에 배달해줄 때는, 그 1줄이 원래 붙어있던 무식하게 거대한 '원본 부모 페이지 전체(Parent)'를 통째로 보쌈하듯 딸려 인입시켜 보내주는 2단계 스왑(SWAP) 아키텍처.
-* 💡 **핵심 산업계 Insight:** "검색은 바늘구멍 조준경으로 예리하게 찾고 (정밀도 상승), 답변은 광활한 숲 배경 설명으로 풍성하게 먹인다 (문맥 단절 보존)" 는 가장 완벽하고 극악적인 엔터프라이즈 모순 해결 콤보 설계입니다. Elasticsearch 등과 결합할 때 최고의 포텐셜을 발휘합니다.
-
-### 📜 4. RAPTOR: 거시의 세계를 압축 요약의 피라미드로 세우다 
-**[논문]** *RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval (Sarthi et al., 스탠포드 2024)*
-* **해설:** 앞선 1~2페이지 세부 토막 청킹의 한계는, "해리포터 1편~7편 전체를 통틀어 주인공의 사상적 성장을 1줄로 요약해봐" 와 같은 전 우주 통합형 쿼리(Global Query) 앞에서는 맥을 못 춘다는 것입니다. RAPTOR는 이런 멍청함을 부수기 위해 문서를 나무 계보로 짭니다. 밑바닥 청크(잎사귀)들을 끼리끼리 묶어 융합한 뒤 LLM으로 요약하고 상위 가지 청크로 통합 격상시키는 과정을 반복해 거대 최상단 서머리 노드 피라미드를 영구 적립합니다. 질문 스케일에 따라 검색하는 높이와 층계를 자동 판독 발동하는 시스템.
-* 💡 **핵심 산업계 Insight:** 후에 7주차에 다룰 Graph RAG와 결합될 때 엄청난 광역 파급을 일으킵니다. 사내 데이터가 수십만 건의 법원 판례일 때, 파편화된 개별 문서를 뒤지는 걸 넘어 "최근 10년간 판결의 추세 요약 숲"이라는 새로운 요약 단서를 기계 스스로 추출 창조해 가지고 있는 권능을 제공합니다.
+### 🎯 청킹 전략 선택의 마스터 기준 3대장 (PDF p.42-44)
+1. **텍스트의 문서 구조 포맷파악:** Python 소스 코드인지, 수치가 빼곡한 HTML 재무 표(Table)인지, 줌스크립트 일상 대화인지에 따라 분할 알고리즘이 달라야 함.
+2. **임베딩 모델의 한계 수용(Token Limit) 확인:** 내가 쓰는 모델(예: text-embedding-3)이 512토큰까지만 씹어 삼키는지 8K토큰까지 수용 가능한지 배기량을 계산.
+3. **사용자 유저 질문(Query)의 스케일업 파악:** 유저가 주로 단답형 명사만 묻는지("창립일은?"), 아니면 서술형 통사(거시 숲)("최근 3년 회사 방향을 요약해")를 묻는지에 파이프라인 조준.
 
 ---
 
-## 💻 [Implementation Frameworks] LlamaIndex 기반 Advanced Chunking & Hierarchical Parse
-단순히 글자 수로 쪼개지 않고, Small-to-big 로직을 접목하거나 문장의 의미로 계층화하는 고도화된 파서는 **LlamaIndex** 생태계에서 가장 우아하고 아름답게 통제 구축됩니다.
+## 2. 하드코딩 난도질 극복: 어드밴스드 청킹 SOTA 기법 
+
+단순히 물리적 글자 수 1000자씩 기계톱으로 자르는 원시적 방식을 초월하기 시작한 최신 메타 방법론입니다. (PDF p.46-54)
+
+* **Recursive Character Splitter (계층형 문자열 분리망):** 문단을 함부로 찢지 않도록 `\n\n`(문단) -> `\n`(줄) -> `.`(마침표) -> ` `(공백) 순서의 계층적 구분자 우선순위를 두어, 마지막의 마지막 순간에만 문맥 허리를 끊게 만드는 국밥형 스플리터 모듈. 문맥 보존의 뼈대.
+* **Semantic Splitting (의미 분할망):** 문장과 문장 사이의 '임베딩 거리(유사도)'를 미친 듯이 실시간 계산합니다. 만약 1번 문장과 2번 문장의 주제 텐서가 확 틀어져서 각도가 낮아지면 "아! 여기서 주제가 전환됐군!" 이라 AI가 스스로 판단해 그 틈새를 가위로 잘라내는 지능형 자가 절단 기법 (PDF p.46).
+* **Document Specific Splitting:** 표(Table) 구조나 이미지 인식을 포함한 비정형 데이터 파싱. 마크다운의 헤더(H1, H2)를 상속 계층 관계로 인식하고 각 자식 노드에 부모의 제목을 꼬리표 메타데이터로 영구 결속시킵니다.
+
+### 📜 번외 혁신: LLM 기반 청킹 Propositions (원자폭탄 조각)
+* **LLM Propositions (PDF p.55):** 최근의 트렌드입니다. 텍스트를 물리적 구분자로 나누는 것이 아니라, LLM 자체 파서에게 텍스트를 던져 **"독립적이고 원자적인 사실 단위(Atomic expressions)"** 한 줄 한 줄 명제로 산산조각 내라고 지시합니다. "존이 사과를 먹었고, 그 사과는 맛없었다" -> [존이 사과를 먹음], [그 사과는 맛없음] 으로 완전히 파인하게 도축하여 검색 정밀도를 우주 극강으로 폭발시킵니다.
+
+---
+
+## 3. 내 도축 칼날의 성적표: 청킹 효과 측정 척도 (Metrics)
+
+그럼 과연 512짜리 청크와 1024 청크 중 내 회사 데이터에 맞는 칼날 사이즈는 어떻게 검측 평가합니까? (PDF p.57-58)
+
+1. **Chunk Attribution (청크 기여도):** 실제 시스템이 유저에게 토해낸 응답 답변 내용 생성에 "해당 청크 내용이 진실로 1%라도 기여했는가?" 아니면 겉절이 들러리로 자리만 차지했는가 평가.
+2. **Chunk Utilization (청크 점유 파괴율):** 예를 들어 1024자짜리 청크를 LLM에게 먹였는데 정작 정답을 도출하기 위해 사용된 본문 내용은 단 1줄(30자) 이었다면? 나머지 990자는 모두 노이즈(Noise) 쓰레기이자 API 요금(Token) 결제 낭비였다는 뜻 증명 지수.
+
+---
+
+## 💻 [Implementation Frameworks] LangChain Recursive Character Splitter 
+단순히 글자 수로만 자르는 초라함을 버리고, 문맥 단절을 최대한 보호 오버랩(Overlap)하는 정교한 베이스 파서 코딩 실습입니다 (PDF p.46 Character Splitter 구현 실습 연계).
 
 ```python
-from llama_index.core import SimpleDirectoryReader
-from llama_index.core.node_parser import SemanticSplitterNodeParser, HierarchicalNodeParser
-from llama_index.embeddings.openai import OpenAIEmbedding
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-# 1. 원시 문서 로드 
-documents = SimpleDirectoryReader("./data/enterprise_docs").load_data()
+# 1. 원시 문서 예제 텍스트 
+document_text = "스마트폰 매출은 폭발했습니다. \n\n (단상 전환) 하지만 PC 매출은 처참했습니다. 그래서 내년 전략은..."
 
-# 2. Semantic Splitter (의미 단위 자율 컷팅 분할기) 초기화
-embed_model = OpenAIEmbedding()
-semantic_splitter = SemanticSplitterNodeParser(
-    buffer_size=1, 
-    breakpoint_percentile_threshold=95, 
-    embed_model=embed_model
+# 2. 계층형 문자 보존 파서 모듈 초기화
+text_splitter = RecursiveCharacterTextSplitter(
+    # 우선순위 분할 토큰 기준점 (문단을 절대 최우선 방어)
+    separators=["\n\n", "\n", ".", "!", "?", " ", ""],
+    chunk_size=100,      # 한방에 묶을 이상적 맥시멈 토큰 용량 파이 
+    chunk_overlap=20,    # 문맥 꼬리 단절 방지를 위해 앞뒤 청크 교집합을 20만큼 본드 접착 매질 부여
+    length_function=len
 )
 
-# 3. 혹은, Small2Big Retrieval을 돕는 부모-자식 다단계 계층 파서망 가동
-hierarchical_splitter = HierarchicalNodeParser.from_defaults(
-    chunk_sizes=[2048, 512, 128] # 거대 부모 -> 자식 -> 말단 손자 단계로 피라미드 노드 폭격 생성
-)
+# 3. 문서를 지능형 노드(청크) 로직 배열로 치환
+chunks = text_splitter.split_text(document_text)
 
-# 4. 문서를 지능형 노드(청크) 로직으로 치환 연산 변환
-nodes = hierarchical_splitter.get_nodes_from_documents(documents)
-print(f"문맥 분절을 완벽 방어하며 쪼갠 생태계 청크 계보수 총량: {len(nodes)}개 파편")
+print(f"문맥 분절을 우선 방어하며 쪼갠 생태계 청크 파편 수: {len(chunks)}개")
+for idx, chunk in enumerate(chunks):
+    print(f"청크 {idx}: {chunk}")
 ```
 
----
-
-## 마무리하며 지성의 조각화 마스터
-
-이번 3주 차 과정에서는 방대한 엔터프라이즈의 무질서 텍스트 덩어리를 LLM의 입 천장에 맞게 정교한 횟감으로 썰어내는 기술인 **문서 청킹 구조론의 SOTA 방법론 (Semantic, Late Chunking, RAPTOR, Small2Big)** 전반을 지독하게 도해했습니다. 아무리 큰 문서라도 잘게 부수면 무너지는 한계를 보완하여 문맥 핏줄을 부모-자식 관계로 잇는 위대한 인사이트들을 흡수했습니다.
-다음 4주 차 대서사시에서는, 이렇게 정교하게 잘라낸 언어 데이터 조각들을 수학적 공간의 무중력 허공 X-Y-Z 행렬 자성 텐서 숫자 배열로 치환 변형해버리는 마법의 통역 신경망, **Embedding Models & Representation Learning (밀집 벡터 표현학 파이프라인의 진수)** 으로 깊이 잠수하여 우주의 속을 관찰 격파 들어가보겠습니다! 돌격!
+## 마무리하며 지성의 거미줄망 조립 
+이번 3주 차 과정에서는 방대한 엔터프라이즈의 무질서 텍스트 덩어리를 LLM의 입 천장 크기와 뉘앙스에 맞게 정교한 생체 조직 단위로 도려내는 기술, **문서 청킹 구조론 및 품질 어트리뷰션 측정 지표** 전반을 뼈저리게 체화했습니다. 
+무식한 사이즈 절단을 타파하고 의미론(Semantic)과 원자적(Proposition) 명제로 고기를 도축하는 섭리를 세웠으니, 다음 4주 차에서는 잘라낸 고깃덩어리 조각 문장들을 수학적 초차원 행렬(Dense Array) 배열 벡터 세계관으로 차원 암호화 압축 변환 인코딩시켜 버리는 무시무시한 언어 매트릭스 변환소, **Embedding Models & Representation Learning for Retrieval** 스테이지로 딥다이브 하여 텍스트가 숫자로 태어나는 경이를 부수겠습니다!
