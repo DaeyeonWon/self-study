@@ -15,7 +15,7 @@ title: 7주차. Knowledge Graph RAG & Graph-based Retrieval Systems
 
 ---
 
-## 1. 순수 텍스트 벡터 밀집 텐서 인코딩 모델 맵핑의 치명적 절단 폭주 한계의 벽
+\n![Microsoft Graph RAG Engine](https://microsoft.github.io/graphrag/assets/images/architecture-diagram.jpg)\n*참고: 마이크로소프트의 공식 GraphRAG 시스템 아키텍처 추출-그래프 파이프라인*\n\n## 1. 순수 텍스트 벡터 밀집 텐서 인코딩 모델 맵핑의 치명적 절단 폭주 한계의 벽
 
 아무리 뛰어난 메타데이터 꼬리표 엔지니어링 스키마를 청크 앞에 예쁘게 치장해 코딩 주입하고, 최신 현존 최강 크로스 어텐션 리랭커 BGE 면접관 통제 모델을 서버 출구에 무장시켜 장착시켜 방어망을 놓아도, 단순 "텍스트 쪼가리 문서 조각 뭉치 조각" 중심 벡터 독립형 데이터베이스계에는 본질적인 위상 통찰 지능 단절이라는 거대 장벽 벽이 영원히 시한폭탄 존재합니다.
 
@@ -24,14 +24,22 @@ title: 7주차. Knowledge Graph RAG & Graph-based Retrieval Systems
 
 ---
 
+
+![Code snippet for chunk utils](assets/images_new/Fig_7_6_page_175.png)
+*Fig 7.6: RecursiveCharacterTextSplitter와 SpacySentenceTokenizer 등 고급 파싱 장치를 위한 Configuration 코어 스니펫.*
+
 ## 2. 엄청난 통찰 파훼 역습 해결사, 지식 그래프(Knowledge Graph 구조망)의 정의 구조와 초강력 트리플 컴포넌트
 
 **지식 그래프 초공간망(Knowledge Graph, KG)** 이란 세상의 그토록 방대하고 무질서 난잡한 어지러운 문서 텍스트 정보들을 단순히 평면의 텍스트 스펠링 문자 글자 배열 단락 파편 단위로 조각내 인지하는 것을 넘어서서 파괴합니다. 마치 태초 인간의 뇌신경 뇌파가 연결 시냅스 뉴런망을 짜듯이, 한 개의 구체적 명사 점(개체 집중 노드, Node Entity)과 다른 한 개의 점을 강력히 직조하는 서술 방향성 선(관계 동사 엣지, Edge Relationship) 구조망 연결 체계를 무한정 이용하여 얽히고설킨 3D 거미줄 인맥 네트워크 시스템으로 부활시킵니다. 수억 개 초거대 연결 스캐폴딩 스키마 기둥이 세워진 절대 지식 정보 덩어리 데이터 베이스 조감 공간(Graph DB: Neo4j 등)으로 무한대 건축하며 세우는 파파라치 입체 맵핑 매트릭스 도해기 로직 구조 창조도입니다. 
 
 ![Knowledge Graph Node Edge Structure Representation Mapping](assets/images_new/Fig_7_1_page_169.png)
-*Fig 7.1: 단순히 길게 늘어진 조각 문장이 아니라 주어나 목적어 명사가 개별적 개체 다이어그램 파편 엔티티 고유 노드로 개별 분리 파괴되고, 행위 서술어에 의해 관계성 포인트 엣지 간격 방향 화살표 다리 연결망을 끝장나게 시각 구축 및 의미 추출하는 구조 모형 지식망 구조 극점 도식화의 완전판.*
+*Fig 7.1: [Recap: How RAG Works] RAG의 근본적 파이프라인(Query -> Embedding -> Vector DB -> Context -> LLM Prompt -> Generate)을 한 눈에 직관적으로 볼 수 있게 정리한 튜토리얼 아키텍처 도안.*
 
-### 2.1 지식 그래프 입체 건축의 뼈대 핵심 공사 3대 구성 원소 체계단 (Triplet 스키마 문법 구조망)
+#
+![Code snippet for chunk utils](assets/images_new/Fig_7_6_page_175.png)
+*Fig 7.6: RecursiveCharacterTextSplitter와 SpacySentenceTokenizer 등 고급 파싱 장치를 위한 Configuration 코어 스니펫.*
+
+## 2.1 지식 그래프 입체 건축의 뼈대 핵심 공사 3대 구성 원소 체계단 (Triplet 스키마 문법 구조망)
 지식 그래프 신경망의 기하학적 시스템 설계 아키텍처는 아이러니하게도 우리 인간 세포가 현실 세상과 언어를 분석, 이해하며 구사하는 가장 직관적이고 본능적인 인지 언어 문장법적 골격 뼈대인 **주어(대상체) + 서술어(상호작용 관계 행위 묘사) + 목적어(피대상체)** 인 이른바 수학적 신성한 삼위일체 "트리플(Triplet) 세 쌍둥이 텐서 배관 형태" 연쇄 고리를 통하여 방대한 우주 복잡계 논리의 난잡 서술계를 일목요연 칼같이 묶어 축소 압축 요약 통일해 냅니다.
 
 1. **지점 거점 노드 포인트 엔티티 (Nodes / Entities):** 책 문서 문장 세계관 스토리 안의 고유명사 형태의 핵심 펙트 개체 주인공들 파트입니다. (예시: 인물군 사람 단체 "스티브 잡스", 과일 거대 카테고리 "황금 코창 망고", 국가 기관 집단 거대 단체 "어벤져스 UN 마블 본부", 가상 영화 우주 장소 지역 대상 "토르의 아스가르드 왕성")
@@ -47,8 +55,7 @@ title: 7주차. Knowledge Graph RAG & Graph-based Retrieval Systems
 
 ---
 
-## 🌟 [10X Massive Deep Dive] 벡터 고립의 저주를 찢고 맥락의 숲을 직조한 SOTA ग्राफ 모델논문 8대 천왕
-
+## 🌟 벡터 고립의 저주를 찢고 맥락의 숲을 직조한 SOTA ग्राफ 모델논문 8대 천왕
 기존 RAG의 파편형 병목 한계와 "전체 통합 스토리텔링 숲 맥락 요약 지성 파트 결여"라는 고질병 암세포를 어떻게 글로벌 구원자 마이크로소프트와 딥러닝 랩 연구진들이 Graph 아키텍처 매트릭스로 대통합 타파해 구원했는지에 대한 최첨단 극비 역작 연구 궤적 논문 구조를 섬세 도해로 파헤쳐 전시합니다!
 
 ### 📜 1. GraphRAG: 숲 전체의 웅장한 거시 파벌 조감도 풍경화를 기계가 스스로 그리는 지식의 메타 결합체 시스템
@@ -92,6 +99,34 @@ flowchart TD
 * **거대 소프트웨어 클라우드 혁신의 아키텍처 의의:** 완전히 물과 기름처럼 태생부터 척지고 분리되어 호환이 불가능했던 두 개의 치명적 결별 별개 C 생태계였던 극단 통계 수학 추론의 정점인 [텍스트 의미 통계망 코사인(고밀도 다차원 Vector Search망)]과 인간 신경 논리 법칙 직관망의 정수 구조망인 [혈연 논리 구조 거미줄망 전파 홉(단일 Node Graph Traverse)] 이 양대 지성의 산맥을 영구 거대하게 하나 합체 단품 이식하여 단 하나의 서버 데이터베이스 엔진 인트라 컴퓨터 메모리 인프라 생태계 공간 위에서 브레이크 하나 없이 숨돌릴 틈 없는 투블럭 연쇄 작용 폭주 기관차처럼 고장 없이 무적 2단계 파이프라인 심리스 결합 연동을 원터치로 한 큐에 구현 발진 연쇄 개발하게 만개한 클라우드 업계 양대 합병 스펙 통합의 기적의 혁신 대폭발 대통합을 이뤄 쾌거를 구가 기원 시켰습니다 현세에.
 
 ---
+
+
+
+## 💻 [Implementation Frameworks] LangChain 기반 Neo4j Graph RAG 구현
+수천 개의 문서를 노드와 엣지(혈연망)로 분절하여 그래프 DB로 관리하는 최신 Neo4j 체인 샘플.
+```python
+from langchain_community.graphs import Neo4jGraph
+from langchain_openai import ChatOpenAI
+from langchain.chains import GraphQAChain
+
+# 1. Neo4j Graph DB 연결 서버 클라우드
+graph = Neo4jGraph(
+    url="neo4j+s://유어-인스턴스.databases.neo4j.io",
+    username="neo4j",
+    password="유어-패스워드"
+)
+
+# 2. Graph QA Chain 구성 (Cypher 쿼리 자동 짜생기)
+chain = GraphQAChain.from_llm(
+    ChatOpenAI(temperature=0),
+    graph=graph,
+    verbose=True
+)
+
+# 3. 홉 체인 다단계 질의
+ans = chain.run("비자금 장부의 A회장과 최근 인수합병을 한 라이벌 B대표 간의 공동 투자 회사는 어디지?")
+print(ans)
+```
 
 ## 마무리하며 최종 소회 기립 박수 압도적 연결망 성취 환희
 

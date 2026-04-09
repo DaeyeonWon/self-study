@@ -13,7 +13,7 @@ title: 8주차. RAG Evaluation, Monitoring & Optimization
 
 ---
 
-## 1. RAG 모델 채점의 지옥 병목: 왜 AI가 판사로 등판했는가? (LLM-as-a-Judge)
+\n![Ragas Evaluation Architecture](https://miro.medium.com/v2/resize:fit:1400/1*C932Dbgj7aM8kE2yYn1A2w.png)\n*참고: RAGAS 메트릭 3대 자동 채점 삼각 체계도*\n\n## 1. RAG 모델 채점의 지옥 병목: 왜 AI가 판사로 등판했는가? (LLM-as-a-Judge)
 
 과거 이미지 분류 AI(개 vs 고양이)는 정답지가 명확하여 단순 수학적 계산(F1 Score, Accuracy)으로 기계 채점이 가능했습니다.
 그러나 RAG 시스템은 단순히 특정 키워드를 맞혔느냐가 아니라, 인간처럼 자연스럽게 10문장의 글로 '서술형 논술 답변'을 통째로 생성을 해버립니다. 정답 단어가 조금 포함되었더라도 나머지 9문장이 창작 소설(환각)이면 개판인 시스템입니다.
@@ -23,8 +23,7 @@ title: 8주차. RAG Evaluation, Monitoring & Optimization
 
 ---
 
-## 🌟 [10X Massive Deep Dive] 글로벌 평가 프레임워크와 실시간 관제 대시보드의 백서 논문 아키텍처 8대장
-
+## 🌟 글로벌 평가 프레임워크와 실시간 관제 대시보드의 백서 논문 아키텍처 8대장
 ### 📜 1. RAGAS 매트릭스: 품질 평가를 3대 해부 축으로 분할한 세계 통일 표준기
 **[논문]** *RAGAS: Automated Evaluation of Retrieval Augmented Generation (Es et al., 2023)*
 * **연구 배경:** "RAG 시스템이 안 좋은데, 검색 인코더가 바보여서 문서를 못 찾은 거냐, 아니면 LLM이 바보여서 문서 줘도 헛소리를 지어내는 거냐?" 라는 치명적 병목 구간 책임 소재를 분리해 수치화할 기준 도구가 지구상에 없었습니다.

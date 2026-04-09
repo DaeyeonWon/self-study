@@ -21,27 +21,55 @@ RAG의 강력함은 방대한 양의 사내 사일로(Silo) 데이터를 LLM과 
 > 집채만 한 거대한 수박(수천 페이지 제품 매뉴얼 문서)을 믹서기 입구 병목(LLM 프롬프트)에 한 번에 통째로 들이밀어 넣을 수는 없습니다. 먹기 좋은 스푼 크기로 깍둑썰기를 해야만 부드럽게 유입됩니다. 하지만 수박을 아무렇게나 톱으로 무지성 난도질해서 껍질과 씨앗만 들어가는 최악의 파편 조각이 우연히 생긴다면? 모델은 그걸 읽다 퉤 뱉어버리고 엉뚱한 대답을 합니다. 의미의 달콤한 결이 칼날에 끊어지지 않고, 가장 조화로운 맛의 과육 단위(문단 문맥 등)로 아름답게 절단하는 수학적 예술 기술이 바로 스마트 청킹입니다.
 
 ![Chunking Concept Analysis](assets/images_new/Fig_4_1_page_40.png)
-*Fig 4.1: 글의 의미론적 단락 경계선과 시스템의 토큰 Byte 제약 조건 사이에서 가장 최적의 청크 파티션이 쪼개지고 나눠지는 메커니즘 모형도 설계.*
+*Fig 4.1: [어드밴스드 청킹 기법 (Advanced Chunking)] 특정 Character Splitter를 사용해 Chunk Size(50)와 Overlap(15) 설정을 적용, 하나의 문단을 핑크, 블루, 옐로우 색상으로 자연스럽게 교차 분리한 청크 구조의 실례.*
 
 ---
 
+
+![Chain of Thought](assets/images_new/Fig_3_1_page_21.png)
+*Fig 3.1: [Chain of Thought Prompting] 테니스 공과 사과 계산 과정을 통해 산술 단계(Step 1, 2, 3)를 하나씩 강제 명시하게 하여, 모델이 단순 결론(오답 27)이 아니라 정답(9)을 찾도록 유도.*
+
+![Chain of Note](assets/images_new/Fig_3_4_page_27.png)
+*Fig 3.4: [Chain of Note Framework] 문서를 읽고 이것이 정답을 도출하기에 Relevant(관련유)인지 Irrelevant(무능)인지 AI가 먼저 평가 필터링하는 파이프라인.*
+
 ## 2. 청킹 아키텍처의 3대 진화 단계 패러다임
 
-### 2.1 Character/Token-based Chunking (단순 고정 길이 무지성 분할)
+#
+![Chain of Thought](assets/images_new/Fig_3_1_page_21.png)
+*Fig 3.1: [Chain of Thought Prompting] 테니스 공과 사과 계산 과정을 통해 산술 단계(Step 1, 2, 3)를 하나씩 강제 명시하게 하여, 모델이 단순 결론(오답 27)이 아니라 정답(9)을 찾도록 유도.*
+
+![Chain of Note](assets/images_new/Fig_3_4_page_27.png)
+*Fig 3.4: [Chain of Note Framework] 문서를 읽고 이것이 정답을 도출하기에 Relevant(관련유)인지 Irrelevant(무능)인지 AI가 먼저 평가 필터링하는 파이프라인.*
+
+## 2.1 Character/Token-based Chunking (단순 고정 길이 무지성 분할)
 초창기 랭체인(Langchain)의 디폴트로 채택된 가장 원시적이고 C코딩으로 구현이 극히 쉬운 코어 기법입니다. 문맥과 인간의 언어를 아예 무시하고, 기계어 바이트 수 500자(문자) 단위, 혹은 트랜스포머 토큰 400개 단위로 무조건 톱날로 자르듯 텍스트를 절단합니다.
 * **치명적 단점:** 인간의 한 문장이나 혹은 중요한 핵심 전문 용어(예: "인공지능")가 "인공", "지능" 두 청크 경계선 사이에서 우연히 절단되어(Truncation) 양쪽 조각에 나뉘어 버리는 대참사가 빈번해 앞뒤 텍스트 간 숨은 의미의 연결고리가 하찮게 끊어지고 RAG 검색 능력이 반토막 폭락합니다.
 
-### 2.2 Overlapping Sliding Window Chunking (오버랩 꼬리 물기 겹침)
+#
+![Chain of Thought](assets/images_new/Fig_3_1_page_21.png)
+*Fig 3.1: [Chain of Thought Prompting] 테니스 공과 사과 계산 과정을 통해 산술 단계(Step 1, 2, 3)를 하나씩 강제 명시하게 하여, 모델이 단순 결론(오답 27)이 아니라 정답(9)을 찾도록 유도.*
+
+![Chain of Note](assets/images_new/Fig_3_4_page_27.png)
+*Fig 3.4: [Chain of Note Framework] 문서를 읽고 이것이 정답을 도출하기에 Relevant(관련유)인지 Irrelevant(무능)인지 AI가 먼저 평가 필터링하는 파이프라인.*
+
+## 2.2 Overlapping Sliding Window Chunking (오버랩 꼬리 물기 겹침)
 무지성 고정 길이 자르기의 문맥 훼손 절단마를 그나마 봉합 완화하기 위해, 이전 청크의 맨 끝 단어들 50개(Overlap length) 버퍼를 다음 새로 시작하는 두 번째 청크의 맨 앞머리에 복사-중복으로 포함시켜 엮어 저장하는 방식입니다. 슬라이딩 윈도우 스캔 방식처럼 바느질하듯 엮습니다.
 
 > 🔗 **이해를 돕는 예시: 풍경 파노라마 사진 바느질 촬영**
 > 스마트폰 카메라로 산 정상에서 파노라마 풍경을 넓게 쭉 이어서 찍을 때, 다음 장면 사진이 어긋나 잘리지 않게 큰 도화지처럼 부드럽게 소프트 연계되도록 가장자리 전경을 의도적으로 살짝 겹치게 구도를 잡고 합성합니다. 오버랩 역시 잘린 의미의 이음새 역할을 하며 붕괴 안전망 역할을 훌륭히 수행합니다.
 
-### 2.3 Semantic Chunking & Structural Parser Extraction (의미 기반 형태 구조적 광학 청킹)
+#
+![Chain of Thought](assets/images_new/Fig_3_1_page_21.png)
+*Fig 3.1: [Chain of Thought Prompting] 테니스 공과 사과 계산 과정을 통해 산술 단계(Step 1, 2, 3)를 하나씩 강제 명시하게 하여, 모델이 단순 결론(오답 27)이 아니라 정답(9)을 찾도록 유도.*
+
+![Chain of Note](assets/images_new/Fig_3_4_page_27.png)
+*Fig 3.4: [Chain of Note Framework] 문서를 읽고 이것이 정답을 도출하기에 Relevant(관련유)인지 Irrelevant(무능)인지 AI가 먼저 평가 필터링하는 파이프라인.*
+
+## 2.3 Semantic Chunking & Structural Parser Extraction (의미 기반 형태 구조적 광학 청킹)
 더 이상 단어나 글자 수를 세지 않는 고급 지능 단계입니다. NLP 언어 모델 구조 분석기나 머신러닝 파서(Parser)를 가동하여, 문장의 끝 마침표(`.`), 엔터 줄바꿈 기호, 혹은 인간이 쓴 문서의 HTML 헤더 태그(`<h1>`, `<h2>`)나 마크다운 구조 챕터를 광학적으로 지능 인지합니다. 이를 기반으로 철저하게 '하나의 테마 단락' 단위로 청크 볼륨을 고무줄처럼 축소/확장하며 유동성 있게 쪼갭니다. 테이블(표) 셀 안의 데이터는 가로세로를 묶어 인지하여 하나의 절대 쪼개지지 않는 캡슐 지식 단위 덩어리로 무적 유지해킵니다.
 
 ![Table Parsing in Chunking](assets/images_new/Fig_4_1_15_page_102.png)
-*Fig 4.1.15: 표(Table)나 다단계 불릿 리스트처럼 2차원 복잡도가 높은 구조를 RAG 문서 안료로 사용할 때 청킹이 내부 스키마를 망가뜨리지 않게 캡슐화 파워 파싱하는 지능형 구조.*
+*Fig 4.1: [어드밴스드 청킹 기법 (Advanced Chunking)] 특정 Character Splitter를 사용해 Chunk Size(50)와 Overlap(15) 설정을 적용, 하나의 문단을 핑크, 블루, 옐로우 색상으로 자연스럽게 교차 분리한 청크 구조의 실례.*
 
 ---
 
@@ -59,8 +87,7 @@ RAG의 강력함은 방대한 양의 사내 사일로(Silo) 데이터를 LLM과 
 
 ---
 
-## 🌟 [10X Massive Deep Dive] 구조적 텍스트 청킹(Chunking)의 역사를 뒤집은 12대 최전선 아키텍처 논문
-
+## 🌟 구조적 텍스트 청킹(Chunking)의 역사를 뒤집은 12대 최전선 아키텍처 논문
 단순히 텍스트를 칼로 써는 방식을 넘어, 문맥을 입체적으로 3D 유지하고 정보의 거대한 연속성 파편화를 보존하기 위한 글로벌 천재 연구진들의 첨단 데이터 구조 공학 아키텍처 트리 모델 생태계들을 샅샅이 해부 전개 소개합니다.
 
 ### 📜 1. RAPTOR: 문서를 거대한 피라미드 나무 트리로 압축 요약하며 추상화하다
@@ -136,6 +163,29 @@ flowchart LR
 * **의의:** 청킹의 오버랩(Sliding Window) 철학을 아예 트랜스포머의 어텐션 기어 신경망 내부 하드코어로 가져가 이식한 모델. 문서를 무제한 길이로 늘이기 위해 전부를 비교하는 풀 어텐션을 포기하고, 내 앞뒤 이웃 토큰 200개 반경만 슬라이딩 윈도우로 무빙 탐색하며 집중 연산하여 만 장의 문서 처리도 병목 없이 가동시키며 토큰 랭스 확장의 역사에 한 획을 그었습니다.
 
 ---
+
+
+
+## 💻 [Implementation Frameworks] LlamaIndex 고급 청킹 파이프라인
+단순히 글자 수로 쪼개지 않고, 의미 단위로 잘라내는 고급 파서는 **LlamaIndex**에서 가장 강력하게 지원합니다.
+```python
+from llama_index.core import SimpleDirectoryReader
+from llama_index.core.node_parser import SemanticSplitterNodeParser
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+# 1. 문서 로드 
+documents = SimpleDirectoryReader("./data").load_data()
+
+# 2. Semantic Splitter (의미 기반 분할기) 초기화
+embed_model = OpenAIEmbedding()
+splitter = SemanticSplitterNodeParser(
+    buffer_size=1, breakpoint_percentile_threshold=95, embed_model=embed_model
+)
+
+# 3. 문서를 노드(청크)로 변환
+nodes = splitter.get_nodes_from_documents(documents)
+print(f"의미 단위로 분리된 총 청크 개수: {len(nodes)}")
+```
 
 ## 마무리하며
 

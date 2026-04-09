@@ -16,8 +16,8 @@ title: 5주차. Vector Databases & Retrieval Architecture Design
 
 이를 부수고 탄생한 **벡터 데이터베이스(Vector Database)** 는 데이터를 엑셀 테이블에 넣는 것이 아니라, 수천 차원 공간 허공에 찍힌 미아 별들로 띄워 군집 형태로 저장합니다. 
 
-![Vector DB Architecture](assets/images_new/Fig_5_1_page_136.png)
-*Fig 5.1: 전통적 관계형 스칼라 DB와 차별화된, 다차원 연속형 거리 기반 Vector DB의 인덱싱 모델링 코어 구조 모식도 비교.*
+![Vector DB Architecture](assets/images_new/Fig_4_3_page_81.png)
+*Fig 4.3: [Vector DB Comparison] Pinecone, Milvus, Weaviate, Qdrant 등 글로벌 메이저 벡터 DB들의 HNSW, IVF(PQ) 지원 성능표를 적나라하게 비교한 백서 차트.*
 
 ---
 
@@ -28,12 +28,11 @@ title: 5주차. Vector Databases & Retrieval Architecture Design
 탐색 1위 결과의 '완벽한 100% 무결점 매칭 정확도'를 0.1% 양보하는 대가로, 검색 속도를 수만 배 폭등시키는 우아한 알고리즘입니다.
 
 ![ANN Tree Strategy](assets/images_new/Fig_5_2_page_137.png)
-*Fig 5.2: ANN 알고리즘을 통한 공간 및 계층 분할 군집 구역 선긋기를 통해 연쇄 검색 비용을 급감시키는 원리 모델.*
+*Fig 5.2: [Test for Retrieval Quality] 광염합성(Photosynthesis) 질의를 검색했을 때, 해당 문서들이 일방적으로 스펠링만 일치하는 것이 아니라 Relevancy(유사성), Preciseness(정밀도)를 모두 충족하는지를 평가하는 QA 검증 과정.*
 
 ---
 
-## 🌟 [10X Massive Deep Dive] 천문학적 빌리언 스케일 인프라를 가능케 한 전설적 논문 아키텍처
-
+## 🌟 벡터 데이터베이스 논문 아키텍처
 아무리 모델의 벡터가 정교해도 0.01초 만에 디스크에서 꺼내오지 못하면 서비스는 파멸합니다. 이 불가능한 공간 연산 지연 한계(Latency bottleneck)를 돌파한 천재 수학자들의 학술적 발자취를 추적합니다.
 
 ### 📜 1. HNSW (Hierarchical Navigable Small World)
@@ -88,6 +87,34 @@ flowchart TD
 8. **Qdrant / Weaviate 엔진:** Rust 언어로 코드를 저수준 작성해 C++을 이기는 스피드 확보 및 파괴적 Payload 기반 메타데이터 사전 필터링 구조 생태계 점령.
 
 ---
+
+
+
+## 💻 [Implementation Frameworks] Pinecone Serverless 클라우드 구축
+서버 관리 없이 인프라를 무한 확장할 수 있는 SaaS 기반 Pinecone 백엔드 구축 샘플입니다.
+```python
+from pinecone import Pinecone, ServerlessSpec
+
+# 1. Pinecone Client 초기화
+pc = Pinecone(api_key="유어-파인콘-api-키")
+
+# 2. 1536 차원의 Vector DB Index (방) 생성
+index_name = "rag-master-index"
+if index_name not in pc.list_indexes().names():
+    pc.create_index(
+        name=index_name,
+        dimension=1536, # OpenAI 임베딩 차원
+        metric="cosine", # 유사도 함수: 코사인
+        spec=ServerlessSpec(
+            cloud="aws",
+            region="us-east-1"
+        )
+    )
+
+# 3. Vector 추가 및 유사도 검색
+index = pc.Index(index_name)
+# index.upsert(...) # 텐서 데이터 주입
+```
 
 ## 마무리하며
 

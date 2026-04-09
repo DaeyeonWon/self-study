@@ -47,8 +47,7 @@ title: 2주차. Prompting Strategies for Hallucination Reduction
 
 ---
 
-## 🌟 [10X Massive Deep Dive] 프롬프트 모형의 지성을 파멸적으로 끌어올린 15대 프론티어 논문 완벽 해부
-
+## 🌟 프롬프트 모형의 지성을 파멸적으로 끌어올린 15대 프론티어 논문 완벽 해부
 LLM이 단순히 앵무새를 넘어 스스로 내면에서 생각하고 검열하며, 자신의 논리의 헛점을 바로잡게 만드는 '인지 제어 마법'의 정수가 담긴 연구들을 집중 조명합니다.
 
 ### 📜 1. 생각의 사슬 (Chain of Thought): AI 사고력 봉인의 해제
@@ -161,6 +160,30 @@ sequenceDiagram
 * **해결 기술:** 모델이 나쁜 말(Toxic)이나 환각을 내뿜으려는 벡터 확률 방향성을 포착하면, 옆에 숨겨둔 "나쁜 말 전용 안티-엑스퍼트 모델"과 "착한 말 전문가 모델" 연산 로직을 출력단(Decoding) 배럴 모서리에 동시 끼워넣어 나쁜 확률 벡터는 상쇄시켜버리고 착한 벡터만 증폭시켜 안전하고 독성 없는 신성한 정답만 깔때기로 골라 도출하는 튜닝 프리 억제 기술입니다.
 
 ---
+
+
+
+## 💻 [Implementation Frameworks] DSPy를 활용한 프롬프트 자동 최적화
+단순히 프롬프트를 텍스트로 치는 시대는 끝났습니다. 스탠포드의 **DSPy**는 프롬프트를 파이토치 신경망처럼 튜닝합니다.
+```python
+import dspy
+
+# 1. 언어 모델 설정 
+turbo = dspy.OpenAI(model="gpt-3.5-turbo")
+dspy.settings.configure(lm=turbo)
+
+# 2. 추론 모듈 (Signature) 선언
+class BasicQA(dspy.Signature):
+    """주어진 질문에 대해 사실에 입각하여 답변합니다."""
+    question = dspy.InputField(desc="사용자의 질문")
+    answer = dspy.OutputField(desc="가장 논리적인 답변")
+
+# 3. ChainOfThought 적용
+cot_qa = dspy.ChainOfThought(BasicQA)
+response = cot_qa(question="환각(Hallucination)을 줄이는 가장 좋은 전략은?")
+print(response.reasoning) # 중간 추론 과정 자동 출력
+print(response.answer)
+```
 
 ## 마무리하며
 

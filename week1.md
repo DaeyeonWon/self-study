@@ -9,27 +9,27 @@ RAG Master 스터디의 대장정에 오신 것을 환영합니다! 1주 차 과
 
 ---
 
-## 1. 생성형 AI 모델(LLM)의 근원적 딜레마와 파괴적 결함
+\n![RAG Conceptual Architecture](https://python.langchain.com/v0.2/img/rag_landscape.png)\n*참고: 일반적인 최신 랭체인 RAG 워크플로 다이어그램*\n\n## 1. 생성형 AI 모델(LLM)의 근원적 딜레마와 파괴적 결함
 
 대규모 언어 모델(LLM)의 등장은 인간과 기계 간의 소통 방식을 송두리째 바꿔 놓았지만, 본질적으로 모델 내부에 하드코딩된 '확률적 앵무새(Stochastic Parrot)' 구조 탓에 치명적인 결함을 내포하고 있습니다. RAG는 바로 이 결함들을 보완하기 위해 탄생한 필연적인 구원자입니다.
 
-### 1.1. 환각 현상 (Hallucination)의 세 가지 치명적 분류
+#\n![RAG Conceptual Architecture](https://python.langchain.com/v0.2/img/rag_landscape.png)\n*참고: 일반적인 최신 랭체인 RAG 워크플로 다이어그램*\n\n## 1.1. 환각 현상 (Hallucination)의 세 가지 치명적 분류
 LLM은 사실을 데이터베이스처럼 '저장(Lookup)'하고 있는 것이 아니라, 방대한 텍스트의 확률 분포를 학습하여 "문맥상 다음에 올 가장 자연스러운 단어"를 통계적으로 예측하여 내뱉습니다. 그 결과, 다음과 같은 세 가지 악성 환각이 발현됩니다.
 1. **Input-conflicting (입력 충돌):** 사용자가 제공한 질문이나 전제 조건 자체를 완전히 무시하고 자가당착에 빠진 소설을 쓰는 현상입니다.
 2. **Context-conflicting (문맥 충돌):** 프롬프트에 제공된 보조 문서의 팩트를 꺾고, 모델 자신이 프리트레이닝 때 배웠던 과거의 낡은 상식을 고집하여 엉뚱하게 결론짓는 현상.
 3. **Fact-conflicting (사실 충돌):** 그 어떤 세상의 진리와도 부합하지 않는, 현실에 없는 가상의 인물, 숫자, 과학적 기전을 기계가 창조해내는 전형적인 거짓말.
 
 ![Hallucination Issue](assets/images_new/Fig_1_1_page_7.png)
-*Fig 1.1: 생성 모델이 범하는 환각(Hallucination)의 주요 3대 유형. RAG 가이드는 이러한 환각이 비즈니스 서비스에 치명적 리스크를 가져온다고 경고합니다.*
+*Fig 1.1: [ChatGPT에서의 환각 발생 사례] 같은 프롬프트 내에서도 질문 의도와 무관하게 대답하거나(Input-Conflicting), 언급되지 않은 컨텍스트를 꾸며내고(Context-Conflicting), 사실과 다른 데이터를 날조(Fact-Conflicting)하는 3대 환각 패턴.*
 
-### 1.2. 모델의 지식 단절 (Knowledge Cut-off) 및 정적 타임라인
+#\n![RAG Conceptual Architecture](https://python.langchain.com/v0.2/img/rag_landscape.png)\n*참고: 일반적인 최신 랭체인 RAG 워크플로 다이어그램*\n\n## 1.2. 모델의 지식 단절 (Knowledge Cut-off) 및 정적 타임라인
 모델 학습은 엄청난 시간과 천문학적인 컴퓨팅 자원(GPU)을 소모합니다. 따라서 학습 시점이 단 하루라도 지나면 최신 법령, 실시간 금융 환율, 어제 일어난 재난 사고 등 세계의 동적 지식을 전혀 인지하지 못합니다. 매일매일 변화하는 산업 환경에서는 정적(Static) 모델이 무용지물이 됩니다.
 
-### 1.3. 프라이버시 누수(Data Privacy Leakage) 및 폐쇄망 보안의 부재
+#\n![RAG Conceptual Architecture](https://python.langchain.com/v0.2/img/rag_landscape.png)\n*참고: 일반적인 최신 랭체인 RAG 워크플로 다이어그램*\n\n## 1.3. 프라이버시 누수(Data Privacy Leakage) 및 폐쇄망 보안의 부재
 기업의 사내 기밀문서나 고객의 민감 개인정보(PII)를 LLM에 직접 학습(Fine-tuning)시킬 경우, 기밀 데이터가 모델 가중치 신경망(Weights) 내부에 영구히 잠복하게 됩니다. 해커나 악의적 사용자가 적대적 프롬프트(Adversarial Prompting)를 던졌을 때, 이 주민등록번호나 사내 비밀번호가 역산되어 유출되는 대참사가 발생합니다.
 
 ![Confidential Information issue](assets/images_new/Fig_1_2_page_8.png)
-*Fig 1.2: 기존 언어 모델들이 내부의 기밀 데이터를 무단으로 유출할 수 있는 치명적 보안 위협 모형.*
+*Fig 1.2: [개인정보 유출 및 보안 위반 사례] 학습 데이터에 포함된 민감한 신용카드 번호(Credit Card) 등의 프라이버시 데이터가 여과 없이 노출되는 치명적인 Data Leakage 버그.*
 
 ---
 
@@ -74,8 +74,7 @@ RAG 모델은 단어 그대로 **'검색을 통해(Retrieval) 외부의 진리 �
 
 ---
 
-## 🌟 [10X Massive Deep Dive] RAG 기초 아키텍처를 창조하고 한계를 부순 15대 글로벌 SOTA 최상위 학술 논문 완벽 해부
-
+## 🌟 RAG 기초 아키텍처를 창조하고 한계를 부순 15대 글로벌 SOTA 최상위 학술 논문 완벽 해부
 기초 RAG의 탄생부터, 그 한계를 폭발적으로 극복해낸 15개의 압도적 연구 페이퍼와 아키텍처 다이어그램을 집중 분석합니다. (각 다이어그램은 논문의 실제 구조를 완벽히 모사한 Mermaid Flowchart로 렌더링 됩니다.)
 
 ### 📜 1. RAG의 기념비적 탄생 (Original RAG Architecture)
@@ -209,6 +208,29 @@ graph LR
 * **해결 기술:** 오픈 도메인에서 인터넷 검색 엔진 (Google Search)을 중간 매개 앵커 RAG로 차용하여 실시간 타임라인 지식을 끌어올리는 프롬프팅 지식을 체계화한 선구적 논문입니다.
 
 ---
+
+
+
+## 💻 [Implementation Frameworks] LangChain 기반 기초 RAG 파이프라인
+현업에서는 가장 대중적으로 사용되는 LLM 프레임워크인 **LangChain**을 통해 기초적인 RAG 뼈대를 5줄만에 구성할 수 있습니다.
+```python
+from langchain.document_loaders import PyPDFLoader
+from langchain.vectorstores import Chroma
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.chains import RetrievalQA
+from langchain.llms import OpenAI
+
+# 1. 문서 로드 및 청킹
+loader = PyPDFLoader("data/RAG_Guide.pdf")
+pages = loader.load_and_split()
+
+# 2. 임베딩 및 Vector DB 저장
+vectorstore = Chroma.from_documents(pages, embedding=OpenAIEmbeddings())
+
+# 3. 질의응답 Retriever 체인 생성
+qa_chain = RetrievalQA.from_chain_type(llm=OpenAI(), retriever=vectorstore.as_retriever())
+print(qa_chain.run("LLM의 주요 3가지 한계점이 무엇인가요?"))
+```
 
 ## 마무리하며
 
