@@ -83,7 +83,7 @@ RAG 모델은 단어 그대로 **'검색을 통해(Retrieval) 외부의 진리 �
 * **해결 기술 (Architecture):** DPR(Dense Passage Retrieval) 코드를 통해 외부 위키피디아 덤프에서 문서를 실시간으로 검색한 뒤, 생성기인 BART 모델의 시퀀스 앞에 붙여 증강 생성하는 종단간(End-to-End) 파이프라인의 원형을 정의했습니다.
 * **학술적 의의:** LLM의 크기를 키우지 않고도 외부 외장하드(Non-parametric memory)를 붙이는 것이 성능을 비약적으로 올림을 증명한 RAG 생태계의 교과서 원론.
 
-<div class="mermaid">
+```mermaid
 graph LR
     Q[Input Query] --> Retriever[Dense Retriever DPR]
     Retriever --> |Vector DB 검색| Docs[Top-K Documents 추출]
@@ -92,7 +92,7 @@ graph LR
     Generator --> Output[Final Generated Answer]
     style Retriever fill:#f9f,stroke:#333,stroke-width:2px
     style Generator fill:#bbf,stroke:#333,stroke-width:2px
-</div>
+```
 
 ### 📜 2. DPR: 밀집 벡터 검색의 표준을 세우다
 **[논문]** *Dense Passage Retrieval for Open-Domain Question Answering (Karpukhin et al., 2020)*
@@ -104,7 +104,7 @@ graph LR
 * **연구 배경:** 이미 다 큰 어른 LLM에 RAG를 붙일 게 아니라, 아기 모델을 사전학습(Pre-training)시킬 때부터 타자 연습하듯 검색하는 습관을 들이게 하자는 구글의 철학.
 * **해결 기술 (Architecture):** 구멍난 단어를 맞추는 Masked Language Modeling 중, 모델 스스로 외부 문서 저장소에서 힌트를 가져와 빈칸을 채우게끔 검색기와 생성기의 기울기(Gradient)를 역전파로 동시에 학습시켰습니다. 검색의 천재로 자생하게 됩니다.
 
-<div class="mermaid">
+```mermaid
 graph TD
     MaskedText["The theory of [MASK] was proposed by Einstein."] --> E[Neural Retriever]
     E -.-> |은닉 공간 탐색| WikipediaDB[(Wikipedia Corpus)]
@@ -113,7 +113,7 @@ graph TD
     MaskedText --> Gen
     Gen --> Ans["relativity"]
     style Gen fill:#ff9999
-</div>
+```
 
 ### 📜 4. RETRO: 트릴리언 단위의 압도적 검색 외장하드
 **[논문]** *Improving language models by retrieving from trillions of tokens (Borgeaud et al., DeepMind, 2021)*
@@ -125,7 +125,7 @@ graph TD
 * **연구 배경:** 문서를 10개 이상 프롬프트에 넣으면 어텐션 연산 비용이 제곱(O(N^2))으로 폭주하여 모델이 멈춥니다.
 * **해결 기술 (Architecture):** 인코더(Encoder) 단에서는 검색된 문서 100개를 각각 1개씩 독립적으로 쪼개어 읽어 들인 후 텐서 코드로 압축합니다. 이후 디코더(Decoder) 단에서 이 100개의 압축 코드를 এক 번에 퓨전(Fusion)시켜 정답 하나를 짜냅니다. 연산 복잡도를 선형(Linear)으로 낮춰 검색을 수백 배 확장한 혁신.
 
-<div class="mermaid">
+```mermaid
 flowchart LR
     Q[Query] --> E1[Encoder: Q + Doc1] & E2[Encoder: Q + Doc2] & E3[Encoder: Q + Doc100...]
     E1 --> T1(Tensor 1)
@@ -134,7 +134,7 @@ flowchart LR
     T1 & T2 & T3 --> Decoder[Cross-Attention Fusion Decoder]
     Decoder --> Out[천재적 통합 답변]
     style Decoder fill:#d4edda,stroke:#28a745,stroke-width:2px
-</div>
+```
 
 ### 📜 6. Atlas: 적은 소수 데이터 학습의 기적
 **[논문]** *Few-shot Learning with Retrieval Augmented Language Models (Izacard et al., 2022)*
@@ -146,13 +146,13 @@ flowchart LR
 * **연구 배경:** 컨텍스트 윈도우가 10만 토큰으로 넓어졌다고 RAG에 문서를 통째로 넣는 자만심을 저격합니다.
 * **방식 & 의의:** 수십 쪽 단락 중 한가운데 정답 문장을 숨겨놨더니 LLM이 전혀 꺼내지 못하고 오답을 냅니다. 앞(Primacy)과 끝(Recency)만 잘 기억하는 인간 뇌파와 똑같은 이 U-shape 그래프 증명은 RAG 파이프라인에서 "반드시 순위 리랭킹 정렬(Reranking)을 해야 한다"는 산업계의 불문율을 만들어냈습니다.
 
-<div class="mermaid">
+```mermaid
 xychart-beta
     title "Lost in the Middle: 정답 위치에 따른 LLM 정확도 급락 현상"
     x-axis "정답의 위치 배열 (맨 앞 -----------> 가운데 -----------> 맨 뒤)" ["1순위", "10순위", "20위(한가운데)", "30순위", "40순위(마지막)"]
     y-axis "Accuracy (정답 도출 정확도 %)" 0 --> 100
     line [95, 78, 15, 65, 93]
-</div>
+```
 
 ### 📜 8. REPLUG: 대형 블랙박스 LLM을 위한 튜닝 없는 RAG
 **[논문]** *REPLUG: Retrieval-Augmented Black-Box Language Models (Shi et al., 2023)*
@@ -163,7 +163,7 @@ xychart-beta
 * **연구 배경:** 뻔히 아는 기초 지식(사과는 맛있다)에도 전부 DB 검색을 때리면 서버 트래픽 낭비가 큽니다.
 * **해결 기술 (Architecture):** 모델이 대답 텍스트를 실시간으로 쓸 때, 다음 단어의 예측 확신도(Confidence Score)가 일정 임계값 이하로 뚝 떨어지는 순간! 기계가 스스로 "어? 나 이 부분 팩트 모른다 헷갈리네" 라고 자각하고 일시 정지합니다. 그 타이밍에 방금 자신이 쓰려던 불확실한 문구를 들고 즉시 DB로 달려가 검색을 때려 팩트를 물고와 이어나가는 무지성 지연 검색 루프입니다. 효율의 정점입니다.
 
-<div class="mermaid">
+```mermaid
 stateDiagram-v2
     [*] --> Generating: 문장 생성 시작
     Generating --> Conf Check: 다음 단어 확신도 체크
@@ -171,7 +171,7 @@ stateDiagram-v2
     Conf Check --> Halt: 40% 이하 뚝! (모르겠다)
     Halt --> Retrieval: 방금 쓴 불확실한 초안으로 검색 실행
     Retrieval --> Generating: 검색된 팩트로 정답 보정하여 재시작
-</div>
+```
 
 ### 📜 10. WebGPT: 웹 브라우저를 서핑하는 RAG 
 **[논문]** *WebGPT: Browser-assisted question-answering with human feedback (Nakano et al., OpenAI 2021)*
@@ -181,7 +181,7 @@ stateDiagram-v2
 **[논문]** *Toolformer: Language Models Can Teach Themselves to Use Tools (Schick et al., Meta 2023)*
 * **해결 기술:** 단순한 문서 검색(RAG)을 한 차원 더 초월하여, LLM 스스로 대답 중간에 `[QA API 호출]`, `[계산기 앱 켜기]`, `[달력 시스템 호출]` 등의 외부 툴킷 명령어 코드를 타이핑하여 결과를 융합해 내는 자율 능력을 심어주어 오답을 파괴적으로 박살 냈습니다. 
 
-<div class="mermaid">
+```mermaid
 graph LR
     Q((질문: 1980만 원을 36개월 할부하면?)) --> LLM[LLM 판단]
     LLM -->|암산하면 무조건 틀림| API[Calculator API 호출: 19,800,000 / 36]
@@ -189,7 +189,7 @@ graph LR
     Res --> LLM2[LLM 문장 조립]
     LLM2 --> Final((매달 55만 원입니다.))
     style API fill:#ffcc99
-</div>
+```
 
 ### 📜 12. KILT: 검색 지능에 관한 통합 모의고사
 **[논문]** *KILT: a Benchmark for Knowledge Intensive Language Tasks (Petroni et al., 2021)*
