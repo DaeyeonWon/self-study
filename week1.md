@@ -1,98 +1,211 @@
 ---
-layout: page_with_mermaid
+layout: default
 title: 1주차. RAG Fundamentals & System Challenges
 ---
 
-# 1주차: RAG Fundamentals & System Challenges (LLM의 한계 극복을 위한 RAG의 도입과 실무적 난제)
-
-인공지능의 시대가 도래하며 LLM(대형 언어 모델)은 세상을 바꿀 마법 지팡이처럼 여겨졌습니다. 하지만 곧 기업들은 LLM을 실무 B2B 프로덕션 환경에 투입하며 끔찍한 병목 현상과 재앙적인 오류들을 마주하게 됩니다.
-이번 1주차 과정에서는 LLM이 본질적으로 지니고 있는 치명적 한계점(Pitfalls)들을 낱낱이 파헤치고, 이를 방어하기 위한 최상위 설계 아키텍처인 **RAG(Retrieval-Augmented Generation)** 의 근본 원리와 실패 지점 7가지를 심층 해부합니다. 
-
-단순한 개념 소개를 넘어, 기업이 직면하는 보안 유출과 파이프라인 붕괴 현상의 인사이트를 다룹니다.
+# 1주차: RAG Fundamentals & System Challenges
+> LLM의 한계 극복을 위한 RAG의 도입과 실무적 난제
 
 ---
 
-## 1. LLM의 이해와 근본적 한계 (The Pitfalls)
+## 1. LLM의 이해와 한계
 
-### 스마트 자동완성 봇의 구조적 맹점
-LLM은 내부적으로 세상의 진리를 판독하는 스카이넷이 아닙니다. 방대한 텍스트 시퀀스 내에서 요소 간의 문맥 확률을 학습하여 다음에 올 단어를 예측하는 '스마트 자동완성 봇(Smart Autocomplete Bot)'에 불과합니다. 이 구조적 특성 때문에 필연적으로 3대 한계점이 발생합니다.
+### 이론 설명
+
+LLM(Large Language Model)은 방대한 텍스트 데이터로 훈련된 '스마트 자동완성 엔진'입니다. 시퀀스 내 요소 간의 문맥 확률을 학습하여 다음에 올 토큰을 예측하며, 이 구조적 특성 때문에 다음의 치명적 한계가 내재합니다.
+
+**3대 핵심 Pitfalls:**
+
+| 한계 | 설명 | 실무 리스크 |
+|------|------|-------------|
+| 환각 (Hallucination) | 사실이 아닌 그럴싸한 내용을 생성 | 의료/법률/금융 도메인 치명적 오류 |
+| 지식 컷오프 | 학습 이후의 최신 정보 접근 불가 | 최신 규정, 가격, 사건 반영 불가 |
+| 보안·편향 | PII 노출 위험, 학습 데이터의 편향 증폭 | 개인정보 유출, 차별적 응답 |
+
+### PDF 원본 자료
 
 <img src="assets/images_new/Fig_1_1_page_7.png" width="600">
-*Fig 1.1: [LLM의 환각(Hallucinations) 사례 (PDF p.7)] 단순 오답이 아닌, 사실과 다르지만 문맥상 그럴싸한 거짓말을 날조하는 치명적 환각 아키텍처 예시.*
+
+*Fig 1.1: LLM 환각(Hallucination) 사례 — "점심 레시피" 요청에 "스테이크(저녁)"를 답변하는 Input-Conflicted, Fact-Conflicted, Context-Conflicted 환각 3대 사례 (PDF p.7)*
 
 <img src="assets/images_new/Fig_1_2_page_8.png" width="600">
-*Fig 1.2: [보안 및 프라이버시 침해 (PDF p.8)] 학습 데이터에 섞여 있던 글로벌 개인 신용카드 번호, 사내 기밀문서 등의 민감한 정보가 여과 없이 노출되는 현상.*
 
-* **주요 PITFALLS 심층 팩트체크:**
-    * **환각 (Hallucinations):** 학습 데이터 구멍을 메우기 위해 그럴싸한 거짓 소설을 지어냅니다. 이는 B2B 계약서 작성이나 의료 진단 도메인에서 기업을 즉결 파산시킬 수 있는 리스크입니다.
-    * **지식 컷오프 (Knowledge Cut-off):** 2023년까지 학습된 모델은 2024년의 최신 법률 개정안을 절대로 알 방법이 없습니다. 
-    * **보안 및 편향성 (Privacy & Bias):** 학습된 데이터의 치충증, 혹은 해커의 프롬프트 인젝션 방어에 속수무책으로 뚫립니다.
+*Fig 1.2: 보안·프라이버시 침해 사례 — 학습 데이터에 포함된 개인 신용정보, 사내 기밀문서가 여과 없이 노출되는 사례 (PDF p.8)*
+
+### 예시
+
+> **환각 시나리오**: GPT에게 "삼성전자의 2024년 3분기 영업이익을 알려줘"라고 물으면, 학습 컷오프 이후이거나 학습 데이터가 부정확할 경우, 실제 수치와 전혀 다른 숫자를 자신있게 답변합니다. 이를 의사결정에 활용하면 실수로 이어집니다.
+
+### 관련 논문
+
+**📄 Survey of Hallucination in Natural Language Generation (Ji et al., 2023)**
+- LLM의 환각 현상을 체계적으로 분류하고 원인을 분석한 서베이 논문
+- Intrinsic Hallucination(입력 컨텍스트와 모순)과 Extrinsic Hallucination(외부 사실과 불일치)로 분류
+- RAG가 환각을 줄이는 핵심 방법론임을 통계적으로 입증
 
 ---
 
-## 2. RAG (Retrieval Augmented Generation)란?
+## 2. RAG (Retrieval-Augmented Generation)란?
 
-이를 해결하기 위해 인공지능이 대답하기 전, 사내 데이터베이스라는 확장된 '도서관'에 파견을 보내는 아키텍처가 등장했습니다.
+### 이론 설명
+
+RAG는 외부 데이터베이스에서 관련 정보를 실시간으로 검색하여, LLM의 응답 프롬프트를 증강(Augment)하는 아키텍처입니다.
+
+**동작 원리:**
+1. **Query** → 유저 질문이 입력됨
+2. **Retrieve** → 질문과 유사한 문서를 외부 DB에서 검색
+3. **Augment** → 검색된 문서를 컨텍스트로 프롬프트에 주입
+4. **Generate** → LLM이 컨텍스트를 바탕으로 사실 기반 응답 생성
+
+**RAG의 핵심 이점:**
+- **정보 최신성**: 새로운 데이터를 DB에 추가하면 즉시 반영, 재학습 불필요
+- **출처 제공 가능(Citability)**: 검색된 문서를 근거로 제시 가능
+- **도메인 특화**: 사내 시스템(ERP, 법률 문서)을 외부 노출 없이 활용
+
+### PDF 원본 자료
 
 <img src="assets/images_new/Fig_1_3_page_10.png" width="600">
-*Fig 1.3: [RAG 기본 아키텍처 메커니즘 (PDF p.10)] 유저 질문 -> 외부 위키 DB 검색 -> 컨텍스트와 질문을 병합하여 LLM에 프롬프트 주입 -> 안전한 답변 생성 구조.*
 
-* **정의:** 외부 신뢰할 수 있는 데이터베이스에서 관련 정보(문단)를 실시간 검색하여, LLM의 응답 프롬프트를 증강(Augment)하는 백엔드 아키텍처.
-* **압도적 이점:** 
-  1. 정보의 실시간 최신성 유지 (새로운 사규가 갱신되어도 재학습 불필요)
-  2. 고객에게 '답변의 출처(Citation)' 제시 가능 (환각 억제)
-  3. 보안이 철저한 도메인 특화 사내 지식(ERP) 활용 가능.
+*Fig 1.3: RAG 기본 아키텍처 — Query → 외부 DB 검색 → 컨텍스트 주입 → 안전한 응답 생성 플로우 (PDF p.10)*
+
+### 관련 논문
+
+**📄 Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (Lewis et al., Meta AI, 2020)**
+- RAG를 처음 제안한 원조 논문
+- DPR(Dense Passage Retrieval)로 문서를 검색하여 BART 생성 모델에 주입하는 최초 구조 제안
+- Open-domain QA, Fact Verification, Jeopardy 생성 등 다양한 NLP 태스크에서 기존 Fine-tuning 대비 우수한 성능 입증
+- **Impact**: 이후 모든 RAG 시스템의 출발점이 된 선구적 논문
 
 ---
 
-## 3. 타 기술과의 대결: RAG vs. Fine-tuning vs. Prompt Engineering
+## 3. RAG vs. Fine-tuning vs. Prompt Engineering 비교
+
+### 이론 설명
+
+기업이 LLM을 도입할 때 흔히 혼동하는 3가지 접근 방식의 차이를 명확히 이해해야 합니다.
+
+### PDF 원본 자료
 
 <img src="assets/images_new/Table_1_1_page_12.png" width="600">
-*Table 1.1: [RAG, Fine-Tuning, Prompt Engineering 간의 스펙 비교 (PDF p.12)] 어느 상황에서 어떤 무기를 채택해야 하는가에 대한 결정 테이블.*
 
-* 💡 **핵심 산업계 Insight:** 
-    * **RAG:** 동적(Dynamic)으로 매일매일 데이터가 변하는 지식 기반 환경에서 팩트 오류를 100% 방지할 수 있는 최고 효율 엔진.
-    * **Fine-Tuning:** 모델에게 새로운 회사 말투나 특정 제이슨(JSON) 출력 폼팩터 행동 양식을 이식할 때 유리하지만, 내일 사실이 바뀌면 다시 1억을 들여 파인튜닝해야 하는 재앙이 존재. 
+*Table 1.1: RAG, Fine-Tuning, Prompt Engineering의 적합성 비교표 (PDF p.12)*
+
+### 각 전략의 포지셔닝
+
+| 전략 | 최적 시나리오 | 한계 |
+|------|-------------|------|
+| **RAG** | 동적 데이터, 팩트 기반 QA, 환각 최소화 | 검색 파이프라인 구축 비용 |
+| **Fine-tuning** | 특정 출력 형식, 특정 도메인 스타일 이식 | 데이터 업데이트 시 재학습 필요 |
+| **Prompt Engineering** | 빠른 프로토타이핑, 간단한 태스크 | 복잡한 추론·최신 데이터에 한계 |
+
+### 관련 논문
+
+**📄 Is Retrieval-Augmented Generation Helpful for LLMs? (Shi et al., 2023)**
+- RAG와 Fine-tuning의 성능을 다양한 태스크에서 비교 분석
+- 지식 집약적 태스크에서는 RAG가 Fine-tuning을 압도
+- 단순 생성 태스크에서는 Fine-tuning이 더 효율적임을 입증
 
 ---
 
-## 4. 실전! RAG 구축의 7가지 주요 실패 지점 (Pain points)
+## 4. RAG 구축의 7가지 주요 실패 지점
 
-튜토리얼 수준에서는 완벽하던 RAG가 실무 서버에서는 왜 터질까요?
+### 이론 설명
+
+파이프라인 완성 후에도 실무 환경에서 RAG는 다음 7가지 지점에서 빈번하게 실패합니다.
+
+### PDF 원본 자료
 
 <img src="assets/images_new/Table_2_1_page_15.png" width="600">
-<img src="assets/images_new/Table_2_2_page_15.png" width="600">
-*Table 2.1 & 2.2: [RAG 파이프라인의 7대 치명적 실패 지점 (PDF p.15)] 시스템이 붕괴하는 원인망.*
 
-1. **내용 누락 (Missing Content):** 근본적으로 데이터베이스에 답을 할 정보 파일 자체가 안 들어있는 경우.
-2. **순위권 밖 문서 (Missed Top Ranked):** 정답 파일이 존재하나, 서치 시스템이 바보여서 100위 밖으로 밀어내 LLM이 읽지도 못한 경우.
-3. **문맥 통합 제한 (Consolidation Strategy Limitations):** 찾기는 5개의 문단을 잘 찾았으나, 이를 프롬프트에 구겨 넣을 때 문맥이 잘리거나 LLM 수용 한계를 초과해 박살 나는 고충.
-4. (이 외 환각 생성, 잘못된 포맷 지시 등 총 7대 실패 사례와 그 원인을 깊이 고찰합니다.)
+<img src="assets/images_new/Table_2_2_page_15.png" width="600">
+
+*Table 2.1 & 2.2: RAG 파이프라인의 7가지 핵심 실패 지점과 그 원인 분류표 (PDF p.15)*
+
+### 7가지 실패 지점 심층 분석
+
+1. **Missing Content (콘텐츠 자체 부재)**: DB에 해당 정보가 아예 없는 경우
+2. **Missed Top Ranked (검색 순위 밖 탈락)**: 정보는 있으나 벡터 유사도 계산 오류로 상위 K에 미포함
+3. **Not in Context (컨텍스트 창 초과)**: Top-K에 들어왔으나 토큰 한도 초과로 LLM이 미참조
+4. **Not Extracted (정보 추출 실패)**: 컨텍스트에 있으나 LLM이 정보를 발췌하지 못함
+5. **Wrong Format (출력 형식 오류)**: 정보는 맞으나 JSON/표 등 요구 형식으로 출력 실패
+6. **Incorrect Specificity (구체성 불일치)**: 답이 너무 포괄적이거나 너무 세부적
+7. **Consolidation Limitations (통합 한계)**: 여러 문서에서 정보를 통합해야 할 때 누락
 
 ---
 
-## 💻 [Implementation Frameworks] LangChain 기반 기초 RAG 방어망 파이프라인
+## 💻 구현: LangChain 기반 기초 RAG 파이프라인
 
-단순히 글을 읽는 것을 넘어, 가장 대중적으로 활용되는 프레임워크인 **LangChain**을 통해 위 RAG의 뼈대를 어떻게 가동하는지 5줄 코드로 보여드립니다.
+### 관련 프레임워크
+
+| 프레임워크 | 특징 | 적합한 상황 |
+|-----------|------|------------|
+| **LangChain** | 가장 풍부한 에코시스템, 체인 구성 용이 | 프로토타이핑, 다양한 컴포넌트 연결 |
+| **LlamaIndex** | 문서 인덱싱에 특화, 고급 검색 패턴 | 구조화된 문서 처리, 복잡한 쿼리 |
+| **Haystack** | 모듈화·프로덕션 배포에 강점 | 엔터프라이즈 배포, 파이프라인 관리 |
+
+### 클라우드 서비스
+
+| 서비스 | 제공사 | 주요 기능 |
+|--------|--------|----------|
+| **Azure AI Search** | Microsoft | 통합 벡터·키워드 서치, OpenAI 연동 |
+| **Amazon Bedrock + Kendra** | AWS | 완전 관리형 RAG, 엔터프라이즈 검색 |
+| **Vertex AI Search** | Google | PaLM/Gemini 연동, 검색 품질 우수 |
+
+### 코드 샘플: 기초 RAG 파이프라인
 
 ```python
-from langchain.document_loaders import PyPDFLoader
-from langchain.vectorstores import Chroma
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
 
-# 1. 외부 지식 문서 로드 및 청킹 (Missing Content 방지)
-loader = PyPDFLoader("data/RAG_Guide.pdf")
-pages = loader.load_and_split()
+# 1. 외부 지식 문서 로드 (PDF)
+loader = PyPDFLoader("data/company_manual.pdf")
+documents = loader.load()
 
-# 2. 임베딩 및 Vector DB 저장 (Missed Top Ranked 방어형 모델 채택 필요)
-vectorstore = Chroma.from_documents(pages, embedding=OpenAIEmbeddings())
+# 2. 텍스트 분할 (청킹)
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=512,
+    chunk_overlap=64,
+)
+chunks = splitter.split_documents(documents)
 
-# 3. 질의응답 Retriever 체인 생성 (지식 통합)
-qa_chain = RetrievalQA.from_chain_type(llm=OpenAI(), retriever=vectorstore.as_retriever())
-print(qa_chain.run("LLM의 주요 3가지 한계점이 무엇인가요?"))
+# 3. 임베딩 및 벡터 DB 저장
+embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+vectorstore = Chroma.from_documents(chunks, embedding=embeddings, persist_directory="./db")
+
+# 4. 환각 방지 프롬프트 템플릿
+prompt = PromptTemplate(
+    template="""당신은 주어진 컨텍스트에만 기반하여 답변하는 정확한 어시스턴트입니다.
+컨텍스트에 없는 정보는 "문서에서 해당 정보를 찾을 수 없습니다"라고 답하세요.
+
+컨텍스트:
+{context}
+
+질문: {question}
+
+답변:""",
+    input_variables=["context", "question"]
+)
+
+# 5. RAG QA 체인 구성
+qa_chain = RetrievalQA.from_chain_type(
+    llm=ChatOpenAI(model="gpt-4o-mini", temperature=0),
+    retriever=vectorstore.as_retriever(search_kwargs={"k": 5}),
+    chain_type_kwargs={"prompt": prompt},
+    return_source_documents=True  # 출처 문서도 반환
+)
+
+# 6. 질의 실행
+result = qa_chain.invoke({"query": "회사의 연차수당 정책은 무엇인가요?"})
+print("답변:", result["result"])
+print("\n참조 문서:")
+for doc in result["source_documents"]:
+    print(f"  - {doc.metadata.get('source', 'unknown')}, p.{doc.metadata.get('page', '?')}")
 ```
 
-## 마무리하며 지식 팽창의 첫걸음
-이번 1주 차 과정에서는 스마트한 LLM의 필연적 저주인 맹목적 환각을 제어하고 프라이버시를 지키는 RAG의 설계 당위성을 파헤쳤습니다. 이제 이 거대한 개념을 장착했으니, 다음 2주 차 **"Prompting Strategies for Hallucination Reduction"** 에서는 검색된 문서를 LLM에게 던져줄 때, 어떻게 윽박지르고 세뇌해야 환각을 0%에 수렴시킬 수 있는지 최상위 프롬프트 주작 기법들을 대해부하겠습니다!
+---
+
+다음 주차 → [2주차: Prompting Strategies for Hallucination Reduction](week2.md)

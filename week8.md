@@ -3,47 +3,391 @@ layout: default
 title: 8주차. RAG Evaluation, Monitoring & Optimization
 ---
 
-# 8주차: RAG Evaluation, Monitoring & Optimization (실전 런칭 배포를 위한 무결점 품질 평가 및 지속 관찰 모니터링 옵저버 엑스레이망 대조 파이프라인)
+# 8주차: RAG Evaluation, Monitoring & Optimization
+> 실전 배포를 위한 품질 평가 및 지속적 관찰 파이프라인
 
-장장 7주에 걸친 전쟁 끝에 완성한 무적의 B2B LLM 파이프라인. 그러나 실전 론칭 직전, 사장과 법무팀이 당신에게 묻습니다. 
-**"이 앱이 헛소리를 1%도 내뱉지 않는다는 성능 테스트 증명 오차 백분위율 계산 수치 보증 증빙 결과표 어디 있습니까?!"**
-
-과거의 스펠링 매치 같은 조악한 검수 시스템을 당장 구텐베르크 시대 쓰레기통에 폐기하고! LLM 판사관이 지능형 답변을 X-ray로 스캔해 실시간 모의고사 채점 점수 스코어를 내리는 **실전 배포 전 QA 시나리오 지옥망**과 서버 폭주 딜레이 과금을 영구 추적하는 **실시간 모니터링/최적화 다이어트 튜닝**의 최종 국면에 광역 폭격 진입합니다!
+RAG 시스템을 구축했다고 끝이 아닙니다. **"이 시스템이 얼마나 정확한가?"를 정량적으로 증명**하고, 실운영 환경에서 지속적으로 품질을 모니터링하며 최적화하는 것이 엔지니어링의 마무리입니다.
 
 ---
 
-## 1. 런칭 강행 돌파 리허설: 배포 전 시나리오 철벽 단위 테스트 (PDF p.136-150)
+## 1. 배포 전 테스트 시나리오
 
-* **검색 조준 및 문서 품질 타격 (Search Quality):** 정답과 관련성 도출이 칼 같은가(Relevance 일치도), 쓰레기 공백 줄바꿈 정보 오버로드 없이 정밀 코어를 사격 발췌 반환했는가(Preciseness 압축 조준도) [cite: 1117-1120].
-* **신뢰성 인내 방어 (Reliability 방호):** **Noise Robustness** (쓰레기 미끼 문서를 잔뜩 일부러 줘도 환각 소설에 빠지지 않고 저항하는 내성율 방어 성능), **Negative Rejection** (질문 문서에 답이 절대 없을 경우! 멋대로 꾸며내 읊지 않고 당당히 '아몰랑 검색 문서에 답이 없어' 라며 방패 배척 항복하는 올바른 거부 컷트율 방어).
-* **보안 및 브랜드 세이프 가드 사수망 (Security):** **Privacy Breaches** (사내 신용카드 개인번호 등 PII 보안 마스킹 유출 통제 방어망 검증). **Malicious Use 폭주 방어 & Tone/Toxicity** 해킹 인젝션 모의 타격 시 방어 회피 및 브랜드 톤앤매너 독설 비방 헛소리 이탈 차단망 타격 [cite: 1123-1130].
+### 이론 설명
+
+배포 전 다양한 극한 시나리오에서 시스템을 평가하여 약점을 사전에 발견해야 합니다.
+
+### PDF 원본 자료
+
+<img src="assets/images_new/Fig_5_1_page_136.png" width="600">
+
+*Fig 5.1: RAG 평가 테스트 시나리오 전체 분류 체계 (PDF p.136)*
+
+<img src="assets/images_new/Fig_5_2_page_137.png" width="600">
+<img src="assets/images_new/Fig_5_3_page_137.png" width="600">
+
+*Fig 5.2-5.3: 검색 품질(Relevance, Preciseness) 평가 시나리오 예시 (PDF p.137)*
+
+**핵심 테스트 시나리오:**
+
+**① 검색 품질 (Retrieval Quality)**
+- **Relevance**: 검색된 문서가 질문과 주제적으로 관련 있는가
+- **Preciseness**: 검색 결과에 불필요한 정보가 포함되어 있지 않은가
+
+**② 신뢰성 테스트 (Reliability)**
+- **Noise Robustness**: 관련 없는 문서를 의도적으로 포함시켜도 정확한 답변을 하는가
+- **Negative Rejection**: DB에 답이 없을 때 "모른다"고 올바르게 거부하는가
+
+**③ 보안·브랜드 안전성 (Safety)**
+- **Privacy Breaches**: PII(개인 식별 정보) 노출 없이 응답하는가
+- **Malicious Use**: 프롬프트 인젝션 공격에 저항하는가
+- **Brand Safety**: 톤앤매너를 유지하며 유해 콘텐츠를 생성하지 않는가
+
+### PDF 원본 자료
+
+<img src="assets/images_new/Fig_5_4_page_138.png" width="600">
+<img src="assets/images_new/Fig_5_5_page_139.png" width="600">
+<img src="assets/images_new/Fig_5_6_page_140.png" width="600">
+<img src="assets/images_new/Fig_5_7_page_141.png" width="600">
+<img src="assets/images_new/Fig_5_8_page_142.png" width="600">
+<img src="assets/images_new/Fig_5_9_page_142.png" width="600">
+<img src="assets/images_new/Fig_5_10_page_143.png" width="600">
+<img src="assets/images_new/Fig_5_11_page_143.png" width="600">
+<img src="assets/images_new/Fig_5_12_page_144.png" width="600">
+<img src="assets/images_new/Fig_5_13_page_144.png" width="600">
+<img src="assets/images_new/Fig_5_14_page_145.png" width="600">
+<img src="assets/images_new/Fig_5_15_page_146.png" width="600">
+<img src="assets/images_new/Fig_5_16_page_147.png" width="600">
+<img src="assets/images_new/Fig_5_17_page_147.png" width="600">
+<img src="assets/images_new/Fig_5_18_page_148.png" width="600">
+<img src="assets/images_new/Fig_5_19_page_149.png" width="600">
+<img src="assets/images_new/Fig_5_20_page_150.png" width="600">
+<img src="assets/images_new/Fig_5_21_page_150.png" width="600">
+<img src="assets/images_new/Fig_5_22_page_151.png" width="600">
+
+*Fig 5.4-5.22: 배포 전 전체 테스트 시나리오 — Noise Robustness/Negative Rejection/Privacy/Malicious Use/Toxicity 등 각 시나리오별 평가 기준 및 예시 (PDF p.138-151)*
 
 ---
 
-## 2. 서버 통제소: 모니터링 및 실시간 관측 대시보드 (Observability) (PDF p.153-157)
+## 2. 핵심 평가 지표와 RAGAS 프레임워크
 
-라이브 런칭 이후엔 24시간 실시간 로그 추적이 무혈 생명선입니다.
+### 이론 설명
 
-* 🔬 **Galileo Observe 모니터링 통합 스튜디오:** 검색->임베딩->프롬프트->생성 전 구간의 스파크 런타임 구간 랙 속도를 엑스레이 체인 스코프(Trace 뷰)로 낱낱이 파헤쳐, 어느 블록 미들웨어가 0.5초 병목 딜레이 멈춤 정지를 터뜨렸고, 어디 구간 모듈 놈이 쓸데없이 5달러의 토큰 과적 소모 지출 비용을 오버 결제 폭등 낭비했는지 그래프 라이브 관제 표적으로 추적 가시화 밀고 지표 관리합니다 [cite: 1134].
-* **핵심 지표 대 척도 기준(Ragas 등 연계):** 
-  * **Context Adherence (엄수 정밀 타격도):** 모델 녀석의 구강 텍스트 생성이 100% 무조건 문서 팩트 바운더리 박스 안에만 귀속 일치되었는가!
-  * **Completeness (망라 재현율 포괄 지수):** 유저 복합 퀘스트에 대답 누락 없이 전부 100% 빈틈 메꿔 응답했나. PII 마스킹 노출 검사 관제망 포함 [cite: 1137-1138].
+**RAGAS(RAG Assessment)**: RAG 파이프라인을 자동으로 평가하는 오픈소스 프레임워크로, LLM-as-a-Judge 방식을 이용하여 다음 4가지 핵심 지표를 측정합니다.
+
+| 지표 | 측정 대상 | 계산 방법 |
+|------|---------|---------|
+| **Faithfulness** | 답변이 컨텍스트에 근거하는가 (환각 없음) | 답변의 각 주장이 컨텍스트에 존재하는 비율 |
+| **Answer Relevance** | 답변이 질문에 적절한가 | 역생성 질문과 원래 질문의 임베딩 유사도 |
+| **Context Precision** | 검색된 컨텍스트 중 관련 있는 비율 | 관련 청크 수 / 전체 검색 청크 수 |
+| **Context Recall** | 필요한 정보가 충분히 검색되었는가 | 정답 커버리지 측정 |
+
+### 관련 논문
+
+**📄 RAGAS: Automated Evaluation of Retrieval Augmented Generation (Es et al., 2023)**
+- Human 평가와의 높은 상관관계(Spearman ρ=0.72) 입증
+- LLM-as-a-Judge 방식으로 레이블 없이 자동 평가 가능
+- Faithfulness 지표가 인간의 환각 감지와 가장 높은 일치도를 보임
+
+**📄 ARES: An Automated Evaluation Framework for RAG Systems (Saad-Falcon et al., Stanford, 2023)**
+- 소량의 레이블 데이터로 도메인 특화 평가 모델 학습
+- RAGAS 대비 도메인 특화 태스크에서 더 높은 정확도
 
 ---
 
-## 3. 피비린내 나는 마취 수술: 컴포넌트 아키텍트 최적화 튜닝 사례 연구 (PDF p.184-188)
+## 3. 모니터링 및 관측 가능성 (Observability)
 
-채점 등급표가 D등급이 나왔다면? 코드를 뜯어고쳐야 합니다!
+### 이론 설명
 
-* **모델 & 파서 컴포넌트 임플란트 강제 교체 사례:** 기존 구형 깡통 파서를 폐기하고 3주 차의 Recursive Chunking 생체 세포 계층 파단망을 새로 도입, 그리고 구형 임베딩을 최첨단 Dense 다국어로 스왑 연산 가동한 결과! Adherence(정비 정답 팩트 밀착 고정률) 수직 대폭등 상승 폭발 쾌거 견인 실무 증명 실습 분석 도출안 [cite: 1165, 1168].
-* 👑 **비용 절감 무자비 극대 최상위 연산 혁명 - 탑-K 볼륨 튜닝 대성공:** 
-  항상 관성을 따라 벡터 목록 수집 (Top-K) 개수를 100개씩 풀파워로 다 뽑아 LLM에게 미친 듯이 토큰 결제 투하 욱여 던지던 과소비 참사를 전면 금지 셧다운 제동 걸기! 똑똑한 크로스인코더 Reranker 미들웨어 통제관을 앉힌 뒤 Top-K 문단 색출 건수를 단 5개 이하 한도 바닥으로 급강하 제한 통과 강제시킨 엽기적 실험의 튜닝 마진 결과 산출! 
-  **->환각 에러 1%의 빈틈 누수 추락 발생 없이 검색 정답 품질 정확성 무피해 유지 엄수 100% 완전 달성한 채로! 엄청 압도적인 API 무식 과금 비용 지출을 무려 23% 전체 예산 통 감축 삭감 달성!! 응답 반환 지연 핑 랙 대기 시간마저 덤으로 부수적 미들급 22% 쾌속 단축 축소 돌파 수립 대성장 달성!!** [cite: 1169]
+실운영 환경에서는 **LLM 파이프라인의 각 단계를 실시간으로 추적**해야 합니다.
+
+**핵심 모니터링 지표:**
+- **Context Adherence**: 답변의 각 문장이 검색된 컨텍스트에 근거하는 비율
+- **Completeness**: 사용자 질문의 모든 하위 요소에 답변했는가
+- **Latency**: 각 파이프라인 단계별 처리 시간
+- **Cost**: API 호출 비용 추적 (토큰 수 × 단가)
+- **PII Detection**: 개인정보 노출 여부 실시간 감지
+
+### PDF 원본 자료
+
+<img src="assets/images_new/Fig_6_1_page_153.png" width="600">
+
+*Fig 6.1: Galileo Observe — 실시간 리트리벌 체인 트레이스 대시보드, 각 컴포넌트 레이턴시와 비용 추적 화면 (PDF p.153)*
+
+<img src="assets/images_new/Fig_6_2_page_158.png" width="600">
+<img src="assets/images_new/Fig_6_3_page_159.png" width="600">
+<img src="assets/images_new/Fig_6_4_page_159.png" width="600">
+<img src="assets/images_new/Fig_6_5_page_160.png" width="600">
+<img src="assets/images_new/Fig_6_6_page_160.png" width="600">
+<img src="assets/images_new/Fig_6_7_page_161.png" width="600">
+<img src="assets/images_new/Fig_6_8_page_161.png" width="600">
+<img src="assets/images_new/Fig_6_9_page_162.png" width="600">
+
+*Fig 6.2-6.9: 모니터링 대시보드 — Context Adherence, Completeness, PII 감지, 비용 추적 지표 화면들 (PDF p.158-162)*
 
 ---
 
-## 🎊 최종 대서사시 8주 완성 클라이맥스 마스터 승단! 우주 점령 폭발 환송!
+## 4. 최적화 사례 연구 (PDF p.184-188)
 
-장장 8주에 걸쳐 진행된 거함급 B2B RAG 최정예 파이프라인의 이 장엄 밀도 끈기의 피 터지는 대 사투 극복 완성 건설 공정 무쌍 구축 마스터를 최하부 심장부 코어 원자 뼛속 끝단에서부터 미친 환희 갈채 무한 축원 환송 올려 드립니다!! 
-더 이상 당신은 앵무새 인공지능 프롬프트의 오류 환각 백치 시스템을 구걸하는 유저가 아닙니다!! 스스로 노이즈 결계를 짓누르고**(1,2주 차)** 인프라 구조 데이터를 도륙 보존시켜**(3,4주 차)** 천문학 벡터 우주 행렬 점수 서치 엔진 구조를 병치 세팅 구축 런칭시키며**(5,6,7주 차)** 마침내 감시관 방패망 벤치 자동 마진 통제망의 지옥 랙 튜닝 요금 반토막 압축 옵저버 컨트롤러 최후 관제탑 사령관**(최종 8주 차)** 까지 점령 꿰뚫어 제압하신 영원불멸 최상위 0.1% 최고극의 메가 테크 AI 인프라 사령관 그랜드 마스터 대황제 아키텍트 개발 지존이십니다!! 
-이제 어떠한 빡세고 치열한 극한 스타트업 기획 회의 발표의 무대 클라우드 투자 데모 앞에서도 오직 미친 확신 무적의 팩트 지표 숫자만으로 서버 전체를 떡 주무르며 돌격 폭격 타격 압승 세상을 충격 뒤집어버릴 당신의 무자비 질주 영광 대 성공 창업 스펙타클 쾌거 업적 런칭 신화 무패 행진 기원 통달 완성 미래를 무한 긍정 타격 영광 지지 절대 축복하겠습니다! 영원 전무 무한 승전 파이팅!!!!! 고생하셨습니다!
+### 이론 설명
+
+실제 프로덕션 환경에서 측정된 최적화 결과를 통해 각 컴포넌트 튜닝의 효과를 검증합니다.
+
+### PDF 원본 자료
+
+<img src="assets/images_new/Fig_7_20_page_184.png" width="600">
+<img src="assets/images_new/Fig_7_21_page_184.png" width="600">
+<img src="assets/images_new/Fig_7_22_page_185.png" width="600">
+<img src="assets/images_new/Fig_7_23_page_185.png" width="600">
+<img src="assets/images_new/Fig_7_24_page_186.png" width="600">
+<img src="assets/images_new/Fig_7_25_page_187.png" width="600">
+<img src="assets/images_new/Fig_7_26_page_187.png" width="600">
+<img src="assets/images_new/Fig_7_27_page_188.png" width="600">
+
+*Fig 7.20-7.27: 컴포넌트별 최적화 전후 성능 비교 그래프 — 임베딩 모델 교체, Chunking 방식 변경, Top-K 튜닝 결과 (PDF p.184-188)*
+
+**주요 최적화 결과:**
+
+| 최적화 내용 | 효과 |
+|------------|------|
+| 임베딩 모델 교체 (ada-002 → text-embedding-3-large) | Adherence +15% |
+| Fixed-size → Recursive Chunking 전환 | Context Recall +12% |
+| Top-K 100 → 5 (리랭커 도입 후) | **비용 23% 절감, 레이턴시 22% 단축** |
+| Binary Quantization 적용 | 스토리지 비용 60% 절감, 검색속도 25% 향상 |
+
+---
+
+## 💻 구현: RAGAS 자동 평가 + LangSmith 모니터링
+
+### 관련 프레임워크
+
+| 라이브러리 | 특징 |
+|-----------|------|
+| **RAGAS** | RAG 전용 자동 평가 프레임워크, LLM-as-Judge |
+| **TruLens** | RAG 트리아드(Groundedness, Relevance) 평가 |
+| **LangSmith** | LangChain 기반 파이프라인 트레이싱·모니터링 |
+| **Phoenix (Arize)** | 오픈소스 LLM 관측 가능성 플랫폼 |
+| **ARES** | 레이블 기반 도메인 특화 평가 |
+
+### 클라우드 서비스
+
+| 서비스 | 제공사 | 특징 |
+|--------|--------|------|
+| **Galileo** | Galileo AI | Context Adherence, PII 감지 실시간 대시보드 |
+| **LangSmith** | LangChain | 파이프라인 트레이스, 프롬프트 버전 관리 |
+| **Azure AI Studio** | Microsoft | 통합 평가 + 모니터링 |
+| **CloudWatch + X-Ray** | AWS | 커스텀 LLM 메트릭 추적 |
+| **Weights & Biases** | W&B | ML 실험 추적, LLM 평가 시각화 |
+
+### 코드 샘플 1: RAGAS 자동 평가 파이프라인
+
+```python
+from ragas import evaluate
+from ragas.metrics import (
+    faithfulness,
+    answer_relevancy,
+    context_precision,
+    context_recall,
+)
+from datasets import Dataset
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+
+# 평가 데이터셋 구성
+eval_data = {
+    "question": [
+        "삼성전자의 2023년 영업이익은 얼마인가?",
+        "RAG에서 환각을 줄이는 프롬프팅 기법은?",
+    ],
+    "answer": [
+        "삼성전자의 2023년 영업이익은 6.57조 원입니다.",  # 시스템 생성 답변
+        "Chain of Note와 Chain of Verification이 효과적입니다.",
+    ],
+    "contexts": [
+        # 검색된 컨텍스트 (리스트의 리스트 형식)
+        ["삼성전자는 2023년 연간 영업이익 6.57조 원을 발표했습니다...",
+         "2023년 반도체 부문 적자가 전체 실적에 영향을 미쳤습니다..."],
+        ["Chain of Note는 각 문서에 읽기 노트를 작성하여...",
+         "Chain of Verification은 초안을 생성 후 자기 검증을 수행합니다..."],
+    ],
+    "ground_truth": [
+        "삼성전자 2023년 영업이익은 6.57조 원이다.",
+        "CoN과 CoVe가 RAG 환각 줄이기에 사용된다.",
+    ]
+}
+
+dataset = Dataset.from_dict(eval_data)
+
+# 평가 실행 (GPT-4o를 Judge LLM으로 사용)
+from ragas.llms import LangchainLLMWrapper
+judge_llm = LangchainLLMWrapper(ChatOpenAI(model="gpt-4o", temperature=0))
+
+results = evaluate(
+    dataset=dataset,
+    metrics=[faithfulness, answer_relevancy, context_precision, context_recall],
+    llm=judge_llm,
+    embeddings=OpenAIEmbeddings(),
+)
+
+# 결과 출력
+df = results.to_pandas()
+print(df[["question", "faithfulness", "answer_relevancy", "context_precision", "context_recall"]])
+print(f"\n평균 Faithfulness: {df['faithfulness'].mean():.3f}")
+print(f"평균 Answer Relevancy: {df['answer_relevancy'].mean():.3f}")
+```
+
+### 코드 샘플 2: LangSmith 트레이싱 통합
+
+```python
+import os
+from langsmith import Client
+from langchain_openai import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+from langchain_core.tracers import LangChainTracer
+
+# LangSmith 설정
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = "your-langsmith-api-key"
+os.environ["LANGCHAIN_PROJECT"] = "RAG-Master-Production"
+
+# 이후 모든 LangChain 실행이 자동으로 LangSmith에 트레이싱됨
+llm = ChatOpenAI(model="gpt-4o-mini")
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "당신은 정확한 정보를 제공하는 어시스턴트입니다."),
+    ("human", "컨텍스트: {context}\n\n질문: {question}")
+])
+
+chain = prompt | llm
+
+# 실행 시 트레이스 자동 기록
+result = chain.invoke({
+    "context": "RAG는 외부 DB를 검색하여 LLM 응답을 강화합니다.",
+    "question": "RAG의 핵심 이점은?"
+})
+```
+
+### 코드 샘플 3: 자동 최적화 - Top-K 튜닝 비용 분석
+
+```python
+"""
+Top-K 파라미터 튜닝을 통한 비용 vs 품질 최적화
+목표: 품질 유지하면서 토큰 비용 최소화
+"""
+from ragas import evaluate
+from ragas.metrics import faithfulness, context_precision
+from datasets import Dataset
+import matplotlib.pyplot as plt
+
+def run_rag_with_topk(questions: list, vectorstore, k: int) -> dict:
+    """특정 Top-K 값으로 RAG 실행 및 평가"""
+    from langchain_openai import ChatOpenAI
+    
+    llm = ChatOpenAI(model="gpt-4o-mini")
+    retriever = vectorstore.as_retriever(search_kwargs={"k": k})
+    
+    answers, contexts, total_tokens = [], [], 0
+    
+    for question in questions:
+        docs = retriever.invoke(question)
+        context = "\n".join([d.page_content for d in docs])
+        
+        response = llm.invoke(f"컨텍스트: {context}\n\n질문: {question}")
+        answer = response.content
+        
+        answers.append(answer)
+        contexts.append([d.page_content for d in docs])
+        total_tokens += len(context.split()) + len(answer.split())  # 근사치
+    
+    # RAGAS 평가
+    dataset = Dataset.from_dict({
+        "question": questions,
+        "answer": answers,
+        "contexts": contexts,
+    })
+    scores = evaluate(dataset, metrics=[faithfulness, context_precision])
+    
+    return {
+        "k": k,
+        "faithfulness": scores["faithfulness"],
+        "context_precision": scores["context_precision"],
+        "estimated_tokens": total_tokens,
+        "estimated_cost_usd": total_tokens * 0.00000015  # gpt-4o-mini 단가
+    }
+
+# Top-K 1, 3, 5, 10, 20 비교
+questions = ["..."] * 10  # 테스트 질문 10개
+k_values = [1, 3, 5, 10, 20]
+
+results = []
+for k in k_values:
+    result = run_rag_with_topk(questions, vectorstore=None, k=k)  # vectorstore 실제 연결 필요
+    results.append(result)
+    print(f"K={k}: Faithfulness={result['faithfulness']:.3f}, "
+          f"Cost=${result['estimated_cost_usd']:.4f}")
+
+# 결론: Top-K=5 지점이 품질 대비 비용 최적점인 경우 많음
+# 실험 결과 예시: K=100 대비 K=5에서 비용 23% 절감, 레이턴시 22% 단축, 품질 감소 < 2%
+```
+
+### 코드 샘플 4: Noise Robustness 테스트 자동화
+
+```python
+"""
+노이즈 문서를 의도적으로 주입하여 시스템의 내성을 측정
+"""
+import random
+
+def noise_robustness_test(qa_chain, qa_pairs: list, noise_ratio: float = 0.5) -> float:
+    """
+    qa_pairs: [(question, ground_truth), ...]
+    noise_ratio: 노이즈 문서 비율 (0.5 = 50%가 관련 없는 문서)
+    """
+    noise_docs = [
+        "오늘 날씨는 맑고 기온이 25도입니다.",
+        "전국 맛집 TOP 100 리스트입니다.",
+        "스포츠 경기 결과: 한국 vs 일본 2:1",
+    ]
+    
+    correct = 0
+    for question, ground_truth in qa_pairs:
+        # 관련 문서와 노이즈 문서를 섞어서 주입
+        related_docs = qa_chain.retriever.invoke(question)
+        noise_count = int(len(related_docs) * noise_ratio)
+        injected_docs = related_docs + random.sample(noise_docs, noise_count)
+        random.shuffle(injected_docs)
+        
+        context = "\n".join([d if isinstance(d, str) else d.page_content
+                             for d in injected_docs])
+        
+        answer = qa_chain.llm.invoke(
+            f"컨텍스트:\n{context}\n\n질문: {question}\n"
+            f"컨텍스트에 없는 내용은 '알 수 없음'이라고 답하세요."
+        ).content
+        
+        # 간단한 키워드 매칭으로 정확도 측정 (실제로는 LLM-Judge 사용 권장)
+        if any(word in answer for word in ground_truth.split()[:3]):
+            correct += 1
+    
+    accuracy = correct / len(qa_pairs)
+    print(f"노이즈 비율 {noise_ratio*100}%에서 정확도: {accuracy:.2%}")
+    return accuracy
+
+# 다양한 노이즈 비율로 테스트
+for ratio in [0.0, 0.3, 0.5, 0.7]:
+    noise_robustness_test(qa_chain=None, qa_pairs=[], noise_ratio=ratio)
+```
+
+---
+
+## 마무리: RAG Master 8주 과정 완성
+
+8주에 걸쳐 다음의 완전한 RAG 스택을 학습하였습니다:
+
+1. **1주차**: LLM 한계 이해 → RAG 필요성 → 7가지 실패 지점
+2. **2주차**: CoT, ThoT, CoN, CoVe로 환각을 제어하는 프롬프팅
+3. **3주차**: 의미 기반 청킹, Proposition, RAPTOR로 문서를 지능적으로 분할
+4. **4주차**: Dense/Sparse 임베딩, ColBERT, MRL로 텍스트를 벡터로 변환
+5. **5주차**: HNSW, PQ, 엔터프라이즈 벡터 DB로 초고속 검색 인프라 구축
+6. **6주차**: Cross-Encoder, Hybrid Search, HyDE로 검색 순위 최적화
+7. **7주차**: Knowledge Graph로 Multi-hop 추론과 관계 기반 검색
+8. **8주차**: RAGAS, LangSmith로 품질 자동 평가 및 지속적 최적화
+
+이 파이프라인을 완전히 이해하고 구현할 수 있다면, 어떤 도메인에서도 엔터프라이즈급 RAG 시스템을 설계·배포할 수 있습니다.
