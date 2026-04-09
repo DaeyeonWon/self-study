@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page_with_mermaid
 title: 5주차. Vector Databases & Retrieval Architecture Design
 ---
 
@@ -13,6 +13,9 @@ title: 5주차. Vector Databases & Retrieval Architecture Design
 ---
 
 ## 1. 벤더 서바이벌: 벡터 데이터베이스 선택 가이드 (PDF p.81-84)
+<div style="display:flex; flex-wrap:wrap; margin-top:10px; margin-bottom:20px;">
+<img src="assets/images_new/Fig_1_2_page_8.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Table_4_3_page_83.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+</div>
 
 세상에 수없이 많은 벡터 서치 엔진 중 자사 엔터프라이즈 환경에 무엇을 깔 것인지 도출합니다.
 

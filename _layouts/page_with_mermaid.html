@@ -1,0 +1,39 @@
+---
+layout: default
+---
+{{ content }}
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ 
+      startOnLoad: true,
+      theme: 'default'
+  });
+
+  document.addEventListener("DOMContentLoaded", function() {
+      // Find all code blocks that contain mermaid syntax
+      // Jekyll kramdown usually outputs <code class="language-mermaid">
+      var codeBlocks = document.querySelectorAll("code.language-mermaid, code.mermaid");
+      
+      codeBlocks.forEach(function(block) {
+          // Typically code is wrapped in a pre tag
+          var parentNode = block.parentNode;
+          if (parentNode.tagName.toLowerCase() === 'pre') {
+              var containerNode = parentNode.parentNode;
+              if (containerNode.classList.contains('highlighter-rouge')) {
+                  // If it's wrapped in Jekyll's highlighter div, grab that
+                  parentNode = containerNode;
+              }
+          }
+          
+          var div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = block.textContent;
+          
+          parentNode.parentNode.replaceChild(div, parentNode);
+      });
+      
+      // Initialize mermaid on the newly created divs
+      mermaid.init(undefined, ".mermaid");
+  });
+</script>

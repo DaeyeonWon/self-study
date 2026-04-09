@@ -1,0 +1,20 @@
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ 
+      startOnLoad: true,
+      theme: 'default'
+  });
+
+  document.addEventListener("DOMContentLoaded", function() {
+      // Find all pre > code.language-mermaid elements and change them to div.mermaid
+      var codeBlocks = document.querySelectorAll("pre > code.language-mermaid, pre > code.mermaid");
+      codeBlocks.forEach(function(block) {
+          var pre = block.parentNode;
+          var div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = block.textContent;
+          pre.parentNode.replaceChild(div, pre);
+      });
+      mermaid.init(undefined, ".mermaid");
+  });
+</script>

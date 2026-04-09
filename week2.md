@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page_with_mermaid
 title: 2주차. Prompting Strategies for Hallucination Reduction
 ---
 
@@ -57,6 +57,9 @@ AI 스스로 판사가 되어 본인의 대답을 재검열합니다:
 <img src="assets/images_new/Fig_3_6_page_32.png" width="600">
 <img src="assets/images_new/Fig_3_9_page_36.png" width="600">
 *Fig 3.6 & 3.9: [EmotionPrompt 및 ExpertPrompting 적용 사례 차트 (PDF p.32-37)]*
+<div style="display:flex; flex-wrap:wrap; margin-top:10px; margin-bottom:20px;">
+<img src="assets/images_new/Fig_3_7_page_33.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_3_8_page_35.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+</div>
 
 * **EmotionPrompt:** "이 답변은 내 커리어에 অত্যন্ত 중요하다(This is very important to my career)", "잘 대답하면 팁을 주겠다" 같은 감정적 부담 문구를 프롬프트에 추가하면 신기하게도 연산 집요성이 10% 이상 뛰어오르는 인간다운 어텐션 스파크 현상.
 * **ExpertPrompting:** "해당 분야의 최고 권위자로서", "수석 보안 엔지니어의 관점에서" 라고 정체성(Persona) 페달을 밟아주면, 하위 계층 데이터를 배제하고 권위 있는 전문 용어와 구조 깊은 포맷의 상세 답변을 무조건 유도해냅니다.

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page_with_mermaid
 title: 6주차. Reranking Models and Hybrid Retrieval Techniques
 ---
 
@@ -13,6 +13,9 @@ title: 6주차. Reranking Models and Hybrid Retrieval Techniques
 ---
 
 ## 1. 1차 포획의 품질 혁명: 하이브리드 및 고급 단서 수색 패턴 (PDF p.127-130)
+<div style="display:flex; flex-wrap:wrap; margin-top:10px; margin-bottom:20px;">
+<img src="assets/images_new/Table_1_1_page_12.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+</div>
 
 <img src="assets/images_new/Fig_4_4_page_94.png" width="600">
 *Fig 4.4: [Reranking Pipeline (PDF p.94)] 검색된 초기 후보군을 다시 중간에서 가로채고 재평가하여 LLM에 최종 주입하는 아키텍처 다이어그램.*
@@ -24,6 +27,9 @@ title: 6주차. Reranking Models and Hybrid Retrieval Techniques
 ---
 
 ## 2. 면접 채점 통제관 : 리랭커(Reranker) 아키텍처 로직 (PDF p.94-101)
+<div style="display:flex; flex-wrap:wrap; margin-top:10px; margin-bottom:20px;">
+<img src="assets/images_new/Table_4_4_page_97.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+</div>
 
 하지만 하이브리드 투트랙으로 뽑혀 올라온 50개의 결과 더미는 사실 퀄리티가 개판입니다. 서로 자기들 1위를 다투며 뒤엉켜있어, 이대로 50개를 전부 LLM 팝업 컨텍스트로 구겨 넣었다간 토큰 폭주 마비 결제로 사장님이 기절할 것입니다. 최정예 해병 탑 K 문서만 5개 추려내 도출해야 합니다!
 

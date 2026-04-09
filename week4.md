@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page_with_mermaid
 title: 4주차. Embedding Models & Representation Learning for Retrieval
 ---
 

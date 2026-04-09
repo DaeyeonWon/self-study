@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page_with_mermaid
 title: 8주차. RAG Evaluation, Monitoring & Optimization
 ---
 
@@ -15,6 +15,9 @@ title: 8주차. RAG Evaluation, Monitoring & Optimization
 ---
 
 ## 1. 전장의 최후 리허설: 배포 전 테스트 시나리오 타격점 (PDF p.136-150)
+<div style="display:flex; flex-wrap:wrap; margin-top:10px; margin-bottom:20px;">
+<img src="assets/images_new/Fig_5_2_page_137.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_3_page_137.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_4_page_138.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_5_page_139.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_6_page_140.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_7_page_141.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_8_page_142.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_9_page_142.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_10_page_143.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_11_page_143.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_12_page_144.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_13_page_144.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_14_page_145.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_15_page_146.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_16_page_147.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_17_page_147.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_18_page_148.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_19_page_149.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_20_page_150.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_5_21_page_150.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+</div>
 
 배포 전, 프레임워크를 우주 가장 혹독한 스트레스 대환장 테스트 지옥 방폭 지대로 밀어 넣어야 합니다.
 
@@ -30,6 +33,9 @@ title: 8주차. RAG Evaluation, Monitoring & Optimization
 ---
 
 ## 2. 모니터링 및 실시간 관측 가능성 (Observability) (PDF p.153-157)
+<div style="display:flex; flex-wrap:wrap; margin-top:10px; margin-bottom:20px;">
+<img src="assets/images_new/Table_2_1_page_15.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Table_2_2_page_15.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Table_6_1_page_156.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Table_6_2_page_157.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Table_6_3_page_157.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+</div>
 
 <img src="assets/images_new/Fig_6_1_page_153.png" width="600">
 *Fig 6.1: [Galileo Observe (PDF p.153)] 검색-프롬프트-응답 까지의 전 파이프라인 구간 스파크 런타임 지표를 쪼개고 비용 구간을 로그 트래킹 시각 대시보드로 통제가 가시화한 시스템.*
@@ -44,6 +50,9 @@ title: 8주차. RAG Evaluation, Monitoring & Optimization
 ---
 
 ## 3. 피비린내 나는 최적화 튜닝 사례 연구 (PDF p.184-188)
+<div style="display:flex; flex-wrap:wrap; margin-top:10px; margin-bottom:20px;">
+<img src="assets/images_new/Fig_7_21_page_184.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_7_22_page_185.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_7_23_page_185.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_7_24_page_186.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_7_25_page_187.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_7_26_page_187.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_7_27_page_188.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"><img src="assets/images_new/Fig_7_28_page_188.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+</div>
 
 채점 등급 점수표를 받아들었다면, 이제 메스 수술을 통해 성과 효율을 도피성 파열 증폭시키는 Optimization 피드백 루프 서사시입니다. 
 

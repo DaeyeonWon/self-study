@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page_with_mermaid
 title: 3주차. Advanced Document Chunking & Context Engineering
 ---
 

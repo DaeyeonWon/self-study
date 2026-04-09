@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page_with_mermaid
 title: 1주차. RAG Fundamentals & System Challenges
 ---
 

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page_with_mermaid
 title: 7주차. Knowledge Graph RAG & Graph-based Retrieval Systems
 ---
 
