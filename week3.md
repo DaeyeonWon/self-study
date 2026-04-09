@@ -1,78 +1,49 @@
 ---
-layout: page_with_mermaid
+layout: default
 title: 3주차. Advanced Document Chunking & Context Engineering
 ---
 
-# 3주차: Advanced Document Chunking & Context Engineering (검색의 심장: 텍스트 분할 최적화 및 토막 수술의 정점)
+# 3주차: Advanced Document Chunking & Context Engineering (검색 성능의 기초가 되는 텍스트 분할 최적화 전략)
 
-아무리 기가 막히게 세뇌된 프롬프트(Week 2)와 천문학적 컴퓨팅 엔진을 가동해도, RAG의 첫 관문인 '문서 수집단(Ingestion)'에서 데이터가 쓰레기같이 조각나 인입된다면 쓰레기 답변(GIGO)을 면할 길이 없습니다. 
-
-인간의 안구는 1,000페이지 분량의 회계 장부를 흝어보며 맥락을 자연스레 이어 붙입니다. 하지만 컴퓨터 데이터베이스는 텍스트를 기계의 뇌 모델 임계점에 맞게 '청크(Chunk, 덩어리)' 단위로 가차 없이 난도질하여 보관합니다. 이 난도질 과정에서 발생할 수 있는 맥락 파단(Context Fragmentation)의 저주를 원천 봉쇄하는 혁신적 기법과 측정 방법론을 해부합니다.
-
----
-
-## 1. 전장의 기초: 청킹(Chunking)의 나비 효과
-
-<img src="assets/images_new/Fig_4_1_page_40.png" width="600">
-*Fig 4.1: [청킹 구조 및 영향력 시각화 (PDF p.41)] 특정 파서를 사용해 Chunk Size(50)와 Overlap(15) 설정을 튜닝하여 문단을 핑크, 블루 색상으로 자연스럽게 교차 분리한 청크 구조 실례.*
-
-* 💡 **핵심 기능:** 글자를 어떻게 쪼개느냐는 단순한 전처리가 아닙니다. 청크 사이즈와 전략은 **"검색 정밀도 품질, 벡터 스토리지 저장 DB 유지 비용 과금액, 실시간 쿼리 응답 랙 타임(지연 시간), 그리고 최악의 환각(Hallucination) 발생 여부"** 전체에 직접적 직격탄 영향을 미칩니다. 사이즈 크면 과금이 폭발하고 속도가 느려지며, 너무 작게 자르면 맥락이 잘려 LLM이 사기를 치기 시작합니다.
-
-### 🎯 청킹 전략 선택의 마스터 기준 3대장 (PDF p.42-44)
-1. **텍스트의 문서 구조 포맷파악:** Python 소스 코드인지, 수치가 빼곡한 HTML 재무 표(Table)인지, 줌스크립트 일상 대화인지에 따라 분할 알고리즘이 달라야 함.
-2. **임베딩 모델의 한계 수용(Token Limit) 확인:** 내가 쓰는 모델(예: text-embedding-3)이 512토큰까지만 씹어 삼키는지 8K토큰까지 수용 가능한지 배기량을 계산.
-3. **사용자 유저 질문(Query)의 스케일업 파악:** 유저가 주로 단답형 명사만 묻는지("창립일은?"), 아니면 서술형 통사(거시 숲)("최근 3년 회사 방향을 요약해")를 묻는지에 파이프라인 조준.
+RAG의 '입구'단에서 문서가 기계적으로 난도질 되면 LLM은 결코 원래 문서의 숲을 이해하지 못합니다. 
+검색 정밀도 품질, 벡터 스토리지 저장 비용, 쿼리 지연 시간 및 환각 발생 여부에 직접적 영향을 미치는 [cite: 316-322] 극초고도화 청킹 아키텍처 세계와 그 기반 논문론을 전면 흡수합니다.
 
 ---
 
-## 2. 하드코딩 난도질 극복: 어드밴스드 청킹 SOTA 기법 
+## 1. 고급 청킹(Chunking)의 파괴적 진화 기법 (PDF p.46-54)
 
-단순히 물리적 글자 수 1000자씩 기계톱으로 자르는 원시적 방식을 초월하기 시작한 최신 메타 방법론입니다. (PDF p.46-54)
+멍청하게 글자 수로 100자씩 자르는 Fixed-size 방식은 죽었습니다. 현대 지식 베이스의 지배적 전략입니다.
 
-* **Recursive Character Splitter (계층형 문자열 분리망):** 문단을 함부로 찢지 않도록 `\n\n`(문단) -> `\n`(줄) -> `.`(마침표) -> ` `(공백) 순서의 계층적 구분자 우선순위를 두어, 마지막의 마지막 순간에만 문맥 허리를 끊게 만드는 국밥형 스플리터 모듈. 문맥 보존의 뼈대.
-* **Semantic Splitting (의미 분할망):** 문장과 문장 사이의 '임베딩 거리(유사도)'를 미친 듯이 실시간 계산합니다. 만약 1번 문장과 2번 문장의 주제 텐서가 확 틀어져서 각도가 낮아지면 "아! 여기서 주제가 전환됐군!" 이라 AI가 스스로 판단해 그 틈새를 가위로 잘라내는 지능형 자가 절단 기법 (PDF p.46).
-* **Document Specific Splitting:** 표(Table) 구조나 이미지 인식을 포함한 비정형 데이터 파싱. 마크다운의 헤더(H1, H2)를 상속 계층 관계로 인식하고 각 자식 노드에 부모의 제목을 꼬리표 메타데이터로 영구 결속시킵니다.
+* **Recursive Character Splitter:** 문단을 함부로 찢지 않도록 `\n\n`(문단) -> `\n`(줄) -> `.`(마침표) 우선순위로 계층적 구분자를 통한 문맥을 보존합니다 [cite: 366].
+* **Semantic Splitting:** 의미론 분할! 임베딩을 이용해 문장 간 유사도를 측정하여 텐서 각도가 급변할 때만 주제별로 잘라 절단합니다 [cite: 423-425].
+* **Document Specific Splitting:** 표(Table) 구조 형식을 보존하거나 Markdown 등 비정형 데이터 파싱 구조를 인식합니다 [cite: 457, 474].
 
-### 📜 번외 혁신: LLM 기반 청킹 Propositions (원자폭탄 조각)
-* **LLM Propositions (PDF p.55):** 최근의 트렌드입니다. 텍스트를 물리적 구분자로 나누는 것이 아니라, LLM 자체 파서에게 텍스트를 던져 **"독립적이고 원자적인 사실 단위(Atomic expressions)"** 한 줄 한 줄 명제로 산산조각 내라고 지시합니다. "존이 사과를 먹었고, 그 사과는 맛없었다" -> [존이 사과를 먹음], [그 사과는 맛없음] 으로 완전히 파인하게 도축하여 검색 정밀도를 우주 극강으로 폭발시킵니다.
+* 🔬 **[SOTA 아키텍트 패러다임]:** *RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval (Sarthi et al., Stanford 2024)*
+* **논문 인사이트:** 청킹된 문서 조각들이 계층 트리를 만듭니다. 하위 문단들 몇 개를 LLM으로 요약(Abstract)시켜 상위 가지 노드로 묶어 올리고, 최종적으론 문서 전체를 요약하는 루트(Root)를 완성합니다. "이 소설 전체 분량에 걸친 주인공의 감정선 변화는?" 같은 초거시적 질문(Global Query)에 대답할 수 없는 깡통 청킹의 맹점을 돌파합니다.
 
----
-
-## 3. 내 도축 칼날의 성적표: 청킹 효과 측정 척도 (Metrics)
-
-그럼 과연 512짜리 청크와 1024 청크 중 내 회사 데이터에 맞는 칼날 사이즈는 어떻게 검측 평가합니까? (PDF p.57-58)
-
-1. **Chunk Attribution (청크 기여도):** 실제 시스템이 유저에게 토해낸 응답 답변 내용 생성에 "해당 청크 내용이 진실로 1%라도 기여했는가?" 아니면 겉절이 들러리로 자리만 차지했는가 평가.
-2. **Chunk Utilization (청크 점유 파괴율):** 예를 들어 1024자짜리 청크를 LLM에게 먹였는데 정작 정답을 도출하기 위해 사용된 본문 내용은 단 1줄(30자) 이었다면? 나머지 990자는 모두 노이즈(Noise) 쓰레기이자 API 요금(Token) 결제 낭비였다는 뜻 증명 지수.
+<br>
+<img src="assets/images_new/mermaid_w3_0.png" width="80%" style="margin: 10px 0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background-color: white; padding: 10px;">
+<br>
 
 ---
 
-## 💻 [Implementation Frameworks] LangChain Recursive Character Splitter 
-단순히 글자 수로만 자르는 초라함을 버리고, 문맥 단절을 최대한 보호 오버랩(Overlap)하는 정교한 베이스 파서 코딩 실습입니다 (PDF p.46 Character Splitter 구현 실습 연계).
+## 2. 혁명의 태동: LLM 기반 청킹: Propositions (원자적 분해)
 
-```python
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+텍스트를 독립적이고 원자적인 사실 단위(Atomic expressions)로 나누어 검색 정밀도 극대화 [cite: 480-481].
 
-# 1. 원시 문서 예제 텍스트 
-document_text = "스마트폰 매출은 폭발했습니다. \n\n (단상 전환) 하지만 PC 매출은 처참했습니다. 그래서 내년 전략은..."
+* 🔬 **[Paper Reference]:** *Dense X Retrieval: What Retrieval Granularity Should We Use? (Chen et al., 2023)*
+* **논문 인사이트:** "지구는 둥글고 태양을 돈다"를 글자나 쉼표로 쪼개는 게 아니라, LLM 파서에게 명제(Proposition) 기반으로 산산조각 내라 시킵니다. `[지구는 둥글다]`, `[지구는 태양을 돈다]`. 이렇게 원자 단위로 쪼개진 팩트 하나하나만 임베딩하면 검색엔진이 혼동할 확률이 수학적으로 급감하고 극단적 스나이핑 명중률을 터뜨립니다.
 
-# 2. 계층형 문자 보존 파서 모듈 초기화
-text_splitter = RecursiveCharacterTextSplitter(
-    # 우선순위 분할 토큰 기준점 (문단을 절대 최우선 방어)
-    separators=["\n\n", "\n", ".", "!", "?", " ", ""],
-    chunk_size=100,      # 한방에 묶을 이상적 맥시멈 토큰 용량 파이 
-    chunk_overlap=20,    # 문맥 꼬리 단절 방지를 위해 앞뒤 청크 교집합을 20만큼 본드 접착 매질 부여
-    length_function=len
-)
+---
 
-# 3. 문서를 지능형 노드(청크) 로직 배열로 치환
-chunks = text_splitter.split_text(document_text)
+## 3. 내 칼날의 성적표: 청킹 효과 측정과 지표 검열 (PDF p.57-58)
 
-print(f"문맥 분절을 우선 방어하며 쪼갠 생태계 청크 파편 수: {len(chunks)}개")
-for idx, chunk in enumerate(chunks):
-    print(f"청크 {idx}: {chunk}")
-```
+청크를 어떻게 자르냐에 따라 내일 RAG 시스템은 천재가 될 수도, 바보가 될 수도 있습니다.
+* **Chunk Attribution (기여도):** 실제 응답 답변 텍스트 생성에 해당 검색 청크 내용 팩트가 기여했는가 [cite: 502].
+* **Chunk Utilization (효율성):** 1024 글자짜리 청크 내 텍스트 중 실제 정답으로 발췌 사용된 비율 [cite: 510]. (나머지는 다 RAM 메모리와 토큰 요금만 잡아먹힌 노이즈 쓰레기임)
 
-## 마무리하며 지성의 거미줄망 조립 
-이번 3주 차 과정에서는 방대한 엔터프라이즈의 무질서 텍스트 덩어리를 LLM의 입 천장 크기와 뉘앙스에 맞게 정교한 생체 조직 단위로 도려내는 기술, **문서 청킹 구조론 및 품질 어트리뷰션 측정 지표** 전반을 뼈저리게 체화했습니다. 
-무식한 사이즈 절단을 타파하고 의미론(Semantic)과 원자적(Proposition) 명제로 고기를 도축하는 섭리를 세웠으니, 다음 4주 차에서는 잘라낸 고깃덩어리 조각 문장들을 수학적 초차원 행렬(Dense Array) 배열 벡터 세계관으로 차원 암호화 압축 변환 인코딩시켜 버리는 무시무시한 언어 매트릭스 변환소, **Embedding Models & Representation Learning for Retrieval** 스테이지로 딥다이브 하여 텍스트가 숫자로 태어나는 경이를 부수겠습니다!
+<br>
+<div style="display:flex; flex-wrap:wrap; margin-top:10px; margin-bottom:20px;">
+<img src="assets/images_new/Fig_4_1_page_40.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+<img src="assets/images_new/Fig_4_2_page_60.png" width="30%" style="margin:5px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+</div>
