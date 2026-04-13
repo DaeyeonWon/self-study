@@ -140,6 +140,20 @@ title: RAG Master — 엔터프라이즈급 RAG 시스템 구축 마스터 클�
 
 ---
 
+### [번외편: Agentic AI — 시스템 아키텍처와 엔지니어링 실무](agentic-ai.md)
+**RAG를 넘어 자율적으로 계획·실행·검증하는 에이전트 시스템의 설계와 구현**
+
+| 항목 | 내용 |
+|------|------|
+| 🏗 아키텍처 | Agentic AI Layers — LLM / RAG / Ethics / Governance 7계층 구조 |
+| 🔄 Agentic RAG | 12단계 자기검증 순환 플로우 (쿼리 재작성 → 소스 자율 선택 → 품질 검증 루프) |
+| 🔧 구축 8단계 | Scope → Prompt → LLM 선택 → Tools → Memory → Orchestration → UI → Evals |
+| 🛠 도구 생태계 | LangGraph / CrewAI / n8n 비교, Consumer vs Coding vs No-Code 플랫폼 분석 |
+| 📊 평가 도구 | LangSmith, Langfuse, Arize Phoenix, Google ADK, Pydantic Evals 8대 도구 |
+| 📄 핵심 논문 | Yao et al. (ReAct), Schick et al. (Toolformer), Asai et al. (Self-RAG), CRAG |
+
+---
+
 ## 🗺 전체 RAG 파이프라인 흐름
 
 ```
