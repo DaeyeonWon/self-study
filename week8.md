@@ -158,15 +158,23 @@ RAG 시스템을 구축했다고 끝이 아닙니다. **"이 시스템이 얼마
 
 ## 💻 구현: RAGAS 자동 평가 + LangSmith 모니터링
 
-### 관련 프레임워크
+### 관련 프레임워크 및 라이브러리
 
-| 라이브러리 | 특징 |
-|-----------|------|
-| **RAGAS** | RAG 전용 자동 평가 프레임워크, LLM-as-Judge |
-| **TruLens** | RAG 트리아드(Groundedness, Relevance) 평가 |
-| **LangSmith** | LangChain 기반 파이프라인 트레이싱·모니터링 |
-| **Phoenix (Arize)** | 오픈소스 LLM 관측 가능성 플랫폼 |
-| **ARES** | 레이블 기반 도메인 특화 평가 |
+| # | 라이브러리 / 서비스 | 특징 |
+|---|-----------|------|
+| 1 | **RAGAS** | RAG 전용 자동 평가, Faithfulness·Relevancy·Context 4대 지표 |
+| 2 | **TruLens** | RAG 트리아드(Groundedness, Relevance, QA) 평가, 대시보드 |
+| 3 | **LangSmith** | LangChain 파이프라인 트레이싱·모니터링, 프롬프트 버전 관리 |
+| 4 | **Phoenix (Arize)** | 오픈소스 LLM 관측 가능성, 임베딩 드리프트 감지 |
+| 5 | **ARES** | 레이블 기반 도메인 특화 자동 평가 프레임워크 |
+| 6 | **Langfuse** | 오픈소스 LLM 트레이싱, 비용 추적, 셀프호스팅 가능 |
+| 7 | **DeepEval (Confident AI)** | pytest 스타일 LLM 유닛 테스트, 14개 평가 메트릭 |
+| 8 | **MLflow LLM Evaluate** | MLflow 통합, LLM 출력 품질·토큰 비용 추적 |
+| 9 | **OpenTelemetry + Traceloop** | 표준 관측 프로토콜, LLM 파이프라인 계측 자동화 |
+| 10 | **Galileo** | Context Adherence, PII 감지, 실시간 프로덕션 대시보드 |
+| 11 | **UpTrain** | 오픈소스, 20개+ 평가 지표, 커스텀 메트릭 정의 가능 |
+| 12 | **Pydantic Evals** | 출력 스키마 검증, 타입 안정성 강제 |
+| 13 | **Promptfoo** | 프롬프트 A/B 테스트 CLI, YAML 기반 테스트 시나리오 |
 
 ### 클라우드 서비스
 

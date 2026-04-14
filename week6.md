@@ -150,14 +150,23 @@ Small2Big 패턴: 세밀한 청크로 검색하고, 발견된 청크의 **부모
 
 ## 💻 구현: 리랭킹 파이프라인 실습
 
-### 관련 프레임워크
+### 관련 프레임워크 및 라이브러리
 
-| 라이브러리 | 특징 |
-|-----------|------|
-| **sentence-transformers CrossEncoder** | 가장 간편한 Cross-Encoder API |
-| **Cohere Rerank API** | 클라우드 리랭킹 서비스, 한국어 지원 |
-| **FlashRank** | 경량 로컬 리랭커, 지연 최소화 |
-| **RankGPT** | GPT-4 기반 Listwise 리랭킹 구현체 |
+| # | 라이브러리 / 서비스 | 특징 |
+|---|-----------|------|
+| 1 | **sentence-transformers CrossEncoder** | 가장 간편한 Cross-Encoder API, 다양한 사전학습 모델 |
+| 2 | **Cohere Rerank API** | 클라우드 리랭킹, 한국어 포함 100개 언어 지원 |
+| 3 | **FlashRank** | 경량 로컬 리랭커, ONNX 기반, 지연 최소화 |
+| 4 | **RankGPT** | GPT-4 기반 Listwise/Pairwise 리랭킹 구현체 |
+| 5 | **FlagEmbedding BGE-Reranker** | BAAI 공식 리랭커, bge-reranker-v2-m3 (다국어) |
+| 6 | **Jina Reranker** | 8192 토큰, 다국어, API+로컬 모두 가능 |
+| 7 | **rank_bm25** | 순수 Python BM25 구현, Sparse 검색 베이스라인 |
+| 8 | **LangChain EnsembleRetriever** | BM25+Dense 하이브리드 RRF 결합 내장 |
+| 9 | **ColBERT (Stanford)** | 토큰 레벨 Late Interaction, 초정밀 검색+리랭킹 |
+| 10 | **RAGatouille** | ColBERTv2 래퍼, 간편한 fine-tuning 및 검색 API |
+| 11 | **LiteLLM** | 여러 LLM 프로바이더 통합 인터페이스, LLM 리랭킹용 |
+| 12 | **Voyager Reranker (Voyage AI)** | 코드·법률 도메인별 특화 리랭킹 모델 |
+| 13 | **Infinity (michaelfeil)** | 임베딩+리랭킹 통합 추론 서버, 배치 최적화 |
 
 ### 클라우드 서비스
 

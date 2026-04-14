@@ -9,7 +9,7 @@ title: 번외편. Agentic AI — 시스템 아키텍처와 엔지니어링 실�
 
 ---
 
-## 0. Intro: LLM에서 Agentic System으로의 전환 (5분)
+## 0. Intro: LLM에서 Agentic System으로의 전환
 
 ### Paradigm Shift
 
@@ -35,7 +35,7 @@ title: 번외편. Agentic AI — 시스템 아키텍처와 엔지니어링 실�
 
 ---
 
-## 1. 세션 1: Agentic AI의 다층적 아키텍처 (15분)
+## 1. 세션 1: Agentic AI의 다층적 아키텍처
 
 ### 시각 자료: Agentic AI Layers
 
@@ -95,7 +95,7 @@ title: 번외편. Agentic AI — 시스템 아키텍처와 엔지니어링 실�
 
 ---
 
-## 2. 세션 2: Agentic RAG — 지능형 정보 수집의 워크플로우 (15분)
+## 2. 세션 2: Agentic RAG — 지능형 정보 수집의 워크플로우
 
 ### 시각 자료: Agentic RAG Flow
 
@@ -167,7 +167,7 @@ title: 번외편. Agentic AI — 시스템 아키텍처와 엔지니어링 실�
 
 ---
 
-## 3. 세션 3: 에이전트 구축 엔지니어링 및 도구 생태계 (15분)
+## 3. 세션 3: 에이전트 구축 엔지니어링 및 도구 생태계
 
 ### 시각 자료: How to Build an AI Agent
 
@@ -303,7 +303,7 @@ title: 번외편. Agentic AI — 시스템 아키텍처와 엔지니어링 실�
 
 ---
 
-## 4. 세션 4: 평가, 모니터링 및 가시성 확보 (10분)
+## 4. 세션 4: 평가, 모니터링 및 가시성 확보
 
 ### 시각 자료: AI Agent Evaluation Frameworks
 
@@ -361,7 +361,7 @@ title: 번외편. Agentic AI — 시스템 아키텍처와 엔지니어링 실�
 
 ---
 
-## 5. Wrap-up 및 Q&A (5분)
+## 5. Wrap-up 및 Q&A
 
 ### 결론: 에이전트는 코드가 아니라 "생태계"
 

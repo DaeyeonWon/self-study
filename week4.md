@@ -110,14 +110,22 @@ Dense (임베딩):
 
 ## 💻 구현: 임베딩 모델 비교 및 활용
 
-### 관련 프레임워크
+### 관련 프레임워크 및 라이브러리
 
-| 라이브러리 | 특징 | 지원 모델 |
-|-----------|------|----------|
-| **sentence-transformers** | 오픈소스, 로컬 실행 | BGE, E5, MPNet 등 |
-| **openai** | API, 최고 성능 | text-embedding-3-small/large |
-| **cohere** | 다국어 특화 | embed-multilingual-v3 |
-| **llama-index** | 다양한 임베딩 통합 | 거의 모든 모델 |
+| # | 라이브러리 / API | 특징 | 지원 모델 |
+|---|-----------|------|----------|
+| 1 | **sentence-transformers** | 오픈소스, GPU/CPU 로컬 실행, 사전학습 모델 풍부 | BGE, E5, MPNet, GTE 등 |
+| 2 | **openai (Python SDK)** | API 기반, MRL 차원 조절 지원, 최고 성능 | text-embedding-3-small/large |
+| 3 | **cohere** | 다국어 특화 API, 100개 언어, 검색 최적화 | embed-multilingual-v3 |
+| 4 | **llama-index Embeddings** | 다양한 임베딩 모델 통합 인터페이스, 청킹 연동 | 거의 모든 모델 |
+| 5 | **FlagEmbedding (BAAI)** | BGE 시리즈 공식 라이브러리, 리랭커 겸용 | BGE-M3, BGE-reranker |
+| 6 | **fastembed (Qdrant)** | ONNX 기반 경량 임베딩, CPU 최적화, 빠른 추론 | BGE-small, all-MiniLM |
+| 7 | **Nomic Embed** | 오픈소스 8K 컨텍스트 임베딩, Matryoshka 지원 | nomic-embed-text-v1.5 |
+| 8 | **Jina Embeddings** | 8K 토큰 지원, 다국어, API+로컬 모두 가능 | jina-embeddings-v3 |
+| 9 | **Voyage AI** | 코드·법률 도메인 특화 임베딩 | voyage-code-3, voyage-law-2 |
+| 10 | **Instructor Embeddings** | 태스크별 instruction 기반 임베딩 커스터마이징 | instructor-xl, instructor-large |
+| 11 | **GritLM** | 생성(LLM)과 임베딩을 단일 모델로 통합 | GritLM-7B, GritLM-8x7B |
+| 12 | **Mixedbread AI** | MRL 기반 압축, Binary Quantization 지원 | mxbai-embed-large-v1 |
 
 ### 클라우드 서비스
 

@@ -159,15 +159,23 @@ Microsoft Research가 제안한 GraphRAG는 단순 그래프 순회를 넘어, *
 
 ## 💻 구현: Knowledge Graph RAG 실습
 
-### 관련 프레임워크
+### 관련 프레임워크 및 라이브러리
 
-| 라이브러리 | 특징 |
-|-----------|------|
-| **LangChain + Neo4j** | 자연어 → Cypher 쿼리 자동 변환 |
-| **LlamaIndex + KnowledgeGraphIndex** | 자동 엔티티 추출 및 그래프 구축 |
-| **Microsoft GraphRAG** | 오픈소스 전체 파이프라인 제공 |
-| **NetworkX** | Python 순수 그래프 분석 라이브러리 |
-| **PyKEEN** | 지식 그래프 임베딩 학습 |
+| # | 라이브러리 / 서비스 | 특징 |
+|---|-----------|------|
+| 1 | **LangChain + Neo4j** | 자연어 → Cypher 쿼리 자동 변환, GraphCypherQAChain |
+| 2 | **LlamaIndex KnowledgeGraphIndex** | 자동 엔티티 추출 및 그래프 구축, 벡터+그래프 하이브리드 |
+| 3 | **Microsoft GraphRAG** | 오픈소스 전체 파이프라인, 커뮤니티 감지+계층 요약 |
+| 4 | **NetworkX** | Python 순수 그래프 분석 라이브러리, 시각화 용이 |
+| 5 | **PyKEEN** | 지식 그래프 임베딩 학습(TransE, RotatE 등) |
+| 6 | **spaCy + NER pipelines** | 오픈소스 NLP, 엔티티 추출 파이프라인 내장 |
+| 7 | **REBEL (BabelScape)** | End-to-end 관계 추출 모델, 220개 관계 유형 |
+| 8 | **Neo4j Python Driver** | 네이티브 Cypher 실행, 트랜잭션 제어, APOC 연동 |
+| 9 | **Nebula Graph** | 분산 그래프 DB, 수백억 엣지 스케일, nGQL |
+| 10 | **KuzuDB** | 임베디드 그래프 DB, Cypher 호환, 서버리스 |
+| 11 | **Memgraph** | 인메모리 그래프 DB, 실시간 스트리밍 분석 |
+| 12 | **DGL (Deep Graph Library)** | GNN 학습 프레임워크, 대규모 그래프 딥러닝 |
+| 13 | **Instructor (jxnl)** | LLM 구조화 출력 강제, Pydantic 기반 트리플 추출 |
 
 ### 클라우드 서비스
 

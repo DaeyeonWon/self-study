@@ -137,14 +137,23 @@ B2B 운영 환경에서는 단순 검색 성능 외에 보안·거버넌스 기�
 
 ## 💻 구현: 벡터 DB 실습
 
-### 관련 프레임워크
+### 관련 프레임워크 및 라이브러리
 
-| 라이브러리 | 특징 |
-|-----------|------|
-| **FAISS** | Meta AI, CPU/GPU 지원, 대규모 인메모리 검색 |
-| **Qdrant Client** | Python/gRPC, 고급 필터링 지원 |
-| **Pinecone SDK** | 완전 관리형, 엔터프라이즈 보안 |
-| **LangChain VectorStores** | 40개 이상 벡터 DB 통합 인터페이스 |
+| # | 라이브러리 / 서비스 | 특징 |
+|---|-----------|------|
+| 1 | **FAISS (Meta AI)** | CPU/GPU 지원, IVF·HNSW·PQ 인덱스, 연구용 표준 |
+| 2 | **Qdrant** | Rust 기반 고성능, 고급 필터링(payload filter), REST/gRPC |
+| 3 | **Milvus / Zilliz** | 분산 아키텍처, 수십억 벡터 스케일, GPU 인덱스 |
+| 4 | **Pinecone** | 완전 관리형 SaaS, 엔터프라이즈 SLA, Serverless |
+| 5 | **Weaviate** | 멀티모달 지원, GraphQL API, 모듈형 벡터라이저 |
+| 6 | **Chroma** | 개발자 친화적 API, 인메모리/영속 전환 용이 |
+| 7 | **pgvector** | PostgreSQL 확장, 기존 RDB 인프라 활용 |
+| 8 | **LanceDB** | 서버리스, 디스크 기반, Lance 컬럼나 포맷 |
+| 9 | **Vespa (Yahoo)** | 하이브리드 검색(벡터+BM25+필터) 네이티브 결합 |
+| 10 | **Marqo** | 멀티모달(텍스트·이미지) 통합 벡터 검색 엔진 |
+| 11 | **Vald (Yahoo Japan)** | 분산 ANN 검색, 대규모 실시간 업데이트 특화 |
+| 12 | **Redis Vector Search** | Redis Stack 기반, 캐시+벡터 검색 통합, 저지연 |
+| 13 | **Turbopuffer** | 서버리스, 저비용 벡터 스토리지, 필터링 최적화 |
 
 ### 클라우드 서비스
 

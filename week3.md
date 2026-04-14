@@ -123,14 +123,22 @@ LLM을 파서로 활용하여 텍스트를 **독립적이고 원자적인 사실
 
 ## 💻 구현: LangChain + LlamaIndex 청킹 실습
 
-### 관련 프레임워크
+### 관련 프레임워크 및 라이브러리
 
-| 프레임워크 | 특징 | 추천 청킹 방식 |
-|-----------|------|------------|
-| **LangChain** | RecursiveCharacterTextSplitter 기본 제공 | 일반 텍스트 |
-| **LlamaIndex** | SemanticSplitterNodeParser, HierarchicalNodeParser | 의미 기반·계층형 |
-| **Unstructured.io** | PDF·Table·Image 구조 인식 파서 | 비정형 문서 |
-| **LlamaParse** | 고품질 PDF 파서 (API 방식) | 복잡한 PDF |
+| # | 프레임워크 / 라이브러리 | 특징 | 추천 청킹 방식 |
+|---|-----------|------|------------|
+| 1 | **LangChain TextSplitters** | RecursiveCharacter, Token, Markdown 등 10종+ 스플리터 내장 | 일반 텍스트, 범용 |
+| 2 | **LlamaIndex NodeParsers** | SemanticSplitter, HierarchicalNodeParser, SentenceWindow | 의미 기반·계층형 |
+| 3 | **Unstructured.io** | PDF·Table·Image 구조 인식 오픈소스 파서 | 비정형 문서 (표, 양식) |
+| 4 | **LlamaParse** | 고품질 PDF 파서 API, 복잡한 레이아웃 처리 | 복잡한 PDF (재무제표) |
+| 5 | **DoclingParser (IBM)** | 오픈소스 문서 이해 엔진, 표·수식·이미지 추출 | 학술 논문, 기술 문서 |
+| 6 | **PyMuPDF (fitz)** | 빠른 PDF 텍스트/이미지 추출, 레이아웃 보존 | 대용량 PDF 처리 |
+| 7 | **pdfplumber** | 표(Table) 추출에 특화된 Python 라이브러리 | PDF 내 표 데이터 |
+| 8 | **Marker (VikParuchuri)** | PDF → Markdown 고품질 변환, OCR 내장 | PDF를 Markdown으로 변환 |
+| 9 | **Chonkie** | 경량 청킹 전용 라이브러리, 다양한 전략 지원 | 빠른 청킹 실험 |
+| 10 | **Textsplitter (jina-ai)** | 의미적 유사도 기반 적응형 분할 | 다국어 의미 기반 |
+| 11 | **Surya (VikParuchuri)** | 다국어 OCR + 레이아웃 분석, 90개 언어 | 스캔 문서, 이미지 PDF |
+| 12 | **Camelot** | PDF 표 추출 전용, Lattice/Stream 두 가지 방식 | 정형 표 데이터 추출 |
 
 ### 클라우드 서비스
 

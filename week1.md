@@ -135,21 +135,31 @@ RAG는 외부 데이터베이스에서 관련 정보를 실시간으로 검색�
 
 ## 💻 구현: LangChain 기반 기초 RAG 파이프라인
 
-### 관련 프레임워크
+### 관련 프레임워크 및 라이브러리
 
-| 프레임워크 | 특징 | 적합한 상황 |
-|-----------|------|------------|
-| **LangChain** | 가장 풍부한 에코시스템, 체인 구성 용이 | 프로토타이핑, 다양한 컴포넌트 연결 |
-| **LlamaIndex** | 문서 인덱싱에 특화, 고급 검색 패턴 | 구조화된 문서 처리, 복잡한 쿼리 |
-| **Haystack** | 모듈화·프로덕션 배포에 강점 | 엔터프라이즈 배포, 파이프라인 관리 |
+| # | 프레임워크 / 라이브러리 | 특징 | 적합한 상황 |
+|---|-----------|------|------------|
+| 1 | **LangChain** | 가장 풍부한 에코시스템, 체인 구성 용이, 40여 개 벡터 DB 통합 | 프로토타이핑, 다양한 컴포넌트 연결 |
+| 2 | **LlamaIndex** | 문서 인덱싱에 특화, 계층형 검색, 데이터 커넥터 내장 | 구조화된 문서 처리, RAG 중심 앱 |
+| 3 | **Haystack (deepset)** | 모듈형 파이프라인, 원클릭 프로덕션 배포 | 엔터프라이즈 배포, CI/CD 통합 |
+| 4 | **DSPy (Stanford)** | 프롬프트를 선언적 프로그램으로 정의, 자동 최적화 | 프롬프트 튜닝, RAG 파이프라인 자동화 |
+| 5 | **Semantic Kernel (Microsoft)** | C#/Python 지원, Azure OpenAI 네이티브 통합 | .NET 기반 엔터프라이즈, 플러그인 아키텍처 |
+| 6 | **Embedchain** | 설정 최소화, URL/PDF/동영상 등 다양한 소스 자동 로드 | 빠른 MVP 구축, 비개발자 친화 |
+| 7 | **Canopy (Pinecone)** | Pinecone 전용 RAG 프레임워크, 원클릭 배포 | Pinecone 사용자, 최소 설정 원할 시 |
+| 8 | **Verba (Weaviate)** | Weaviate 전용 RAG UI 포함, 멀티모달 지원 | Weaviate 사용자, 시각적 데모 필요 시 |
+| 9 | **txtai** | 경량 임베딩 DB + RAG, 단일 파이썬 패키지 | 경량 프로젝트, 로컬 실행 |
+| 10 | **Ragflow** | 오픈소스 딩 다큐먼트 이해 RAG 엔진, 청킹 시각화 | 대규모 문서 처리, 청킹 품질 검증 |
+| 11 | **Cognita (TrueFoundry)** | 오픈소스 모듈형 RAG, 파이프라인 커스터마이징 | 프로덕션 RAG, 컴포넌트 교체 실험 |
+| 12 | **Langroid** | Multi-Agent RAG, 에이전트 기반 문서 QA | Agent 기반 RAG, 복잡한 워크플로우 |
 
 ### 클라우드 서비스
 
 | 서비스 | 제공사 | 주요 기능 |
-|--------|--------|----------|
+|--------|--------|--------|
 | **Azure AI Search** | Microsoft | 통합 벡터·키워드 서치, OpenAI 연동 |
 | **Amazon Bedrock + Kendra** | AWS | 완전 관리형 RAG, 엔터프라이즈 검색 |
-| **Vertex AI Search** | Google | PaLM/Gemini 연동, 검색 품질 우수 |
+| **Vertex AI Search** | Google | Gemini 연동, 검색 품질 우수 |
+| **Cohere RAG** | Cohere | Command-R+ 모델 내장 RAG, 인용 자동 생성 |
 
 ### 코드 샘플: 기초 RAG 파이프라인
 
