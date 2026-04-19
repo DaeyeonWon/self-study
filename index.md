@@ -154,6 +154,21 @@ title: RAG Master — 엔터프라이즈급 RAG 시스템 구축 마스터 클�
 
 ---
 
+### [번외편: Harness Engineering — 왜 지금 하네스 엔지니어링인가](harness-engineering.md)
+**모델이 아니라 모델이 일하는 환경이 성능을 결정한다 — 하네스 설계의 원칙과 실전**
+
+| 항목 | 내용 |
+|------|------|
+| 🔄 패러다임 전환 | Prompt → Context → Harness Engineering 3단계 진화 |
+| 📊 정량 근거 | SkillsBench — curated skills로 pass rate 16.2pp 상승 |
+| ⚠️ 실패 패턴 | 세션간 기억 소실, Context Anxiety, Self-evaluation 편향 |
+| 🛠 설계 6요소 | AGENTS.md / Permissions / Hooks / MCP / Subagent / 메타 원칙 |
+| 🔧 제품 패치 | Codex Mid-turn Steering, Claude Code Task Graph, Agent Memory 격리 |
+| 🌐 오픈소스 | OpenCode & OMO — Prometheus/Atlas/Sisyphus 멀티에이전트 오케스트레이션 |
+| 📄 핵심 논문 | OpenAI Harness Engineering, Anthropic Harness Design, SkillsBench |
+
+---
+
 ## 🗺 전체 RAG 파이프라인 흐름
 
 ```
