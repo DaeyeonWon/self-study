@@ -169,6 +169,21 @@ title: RAG Master — 엔터프라이즈급 RAG 시스템 구축 마스터 클�
 
 ---
 
+### [번외편: TurboQuant — KV Cache와 LLM 메모리 최적화](turboquant.md)
+**모델 weights만이 아니라 KV cache와 메모리 계층 설계가 LLM 최적화의 핵심이다**
+
+| 항목 | 내용 |
+|------|------|
+| 🧠 핵심 개념 | Attention → KV Cache → 메모리 병목으로 이어지는 구조적 이해 |
+| 🔬 TurboQuant | Random Rotation + Scalar Quantization + Residual QJL 2단계 압축 |
+| 📐 PolarQuant | Polar Coordinates 변환으로 KV Cache 고품질 압축 (1단계) |
+| ⚡ 실험 결과 | 3.5 bits/channel에서 absolute quality neutrality 달성 |
+| 🔄 NVIDIA KVTC | Reusable/Offloaded KV Cache용 Transform Coding 압축 |
+| 💻 NVFP4 | Hardware-native 4-bit KV Cache — FP8 대비 50% 메모리 절감 |
+| 📄 핵심 논문 | TurboQuant (Google), PolarQuant (Google), KVTC (NVIDIA) |
+
+---
+
 ## 🗺 전체 RAG 파이프라인 흐름
 
 ```
